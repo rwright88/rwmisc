@@ -1,2 +1,4 @@
+^LICENSE\.md$
+^README\.Rmd$
 ^rwmisc\.Rproj$
 ^\.Rproj\.user$

@@ -1,0 +1,28 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = FALSE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# rwmisc
+
+Miscellaneous functions.
+
+## Installation
+
+```{r eval=FALSE}
+devtools::install_github("rwright88/rwmisc")
+```
+
+## Examples
+
+TODO
