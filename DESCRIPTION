@@ -8,9 +8,9 @@ Authors@R:
            email = "raywright88@gmail.com")
 Description: Miscellaneous functions.
 License: MIT + file LICENSE
+Imports: 
+    ggplot2
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.0
-Imports: 
-    ggplot2

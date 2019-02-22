@@ -1,10 +1,10 @@
 # TODO
-# summary2() is unfinished
+# summary2() is unfinished, must work with classes such as Date
 
 #' Alternative to `base::summary()` for data frames
 #'
-#' @param data a data frame
-#' @return list
+#' @param data A data frame
+#' @return A list
 #' @export
 summary2 <- function(data) {
   if (!is.data.frame(data)) {
