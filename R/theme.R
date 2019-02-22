@@ -1,3 +1,6 @@
+# TODO
+# theme_rw() is unfinished
+
 #' A ggplot2 theme similar to `ggplot2::theme_bw()`
 #'
 #' @param base_size base font size

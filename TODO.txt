@@ -1,0 +1,10 @@
+ideas:
+
+count_calls()
+fin_amort_<>()
+summary2()
+theme_rw()
+
+text file operations
+count vector
+database chunks
