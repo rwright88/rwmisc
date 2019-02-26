@@ -8,7 +8,7 @@
 #' @param n Number of periods
 #' @return Numeric vector of payment per period
 #' @export
-fin_amort_payment <- function(principal, rate, n) {
+fin_amort_pay <- function(principal, rate, n) {
   principal * (rate * (1 + rate) ^ n) / ((1 + rate) ^ n - 1)
 }
 
@@ -25,7 +25,7 @@ fin_amort_rate <- function(principal, payment, n, tol = 1e-5) {
   rate_upper <- (payment * n) / principal - 1
   rate_guess <- min(0.05, rate_upper / 2)
 
-  pay_calc <- fin_amort_payment(principal, rate_guess, n)
+  pay_calc <- fin_amort_pay(principal, rate_guess, n)
   pay_diff <- (pay_calc - payment) / payment
 
   while (abs(pay_diff) > tol) {
@@ -36,7 +36,7 @@ fin_amort_rate <- function(principal, payment, n, tol = 1e-5) {
       rate_upper <- rate_guess
       rate_guess <- (rate_guess + rate_lower) / 2
     }
-    pay_calc <- calc_payment(principal, rate_guess, n)
+    pay_calc <- fin_amort_pay(principal, rate_guess, n)
     pay_diff <- (pay_calc - payment) / payment
   }
 

@@ -7,9 +7,9 @@
 theme_rw(base_size = 12, base_family = "")
 }
 \arguments{
-\item{base_size}{base font size}
+\item{base_size}{Base font size}
 
-\item{base_family}{base font family}
+\item{base_family}{Base font family}
 }
 \description{
 A ggplot2 theme similar to \code{ggplot2::theme_bw()}

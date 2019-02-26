@@ -1,5 +1,5 @@
 # TODO
-# summary2() is unfinished, must work with classes such as Date
+# summary2() is unfinished, must work with classes such as Date, use table()?
 
 #' Alternative to `base::summary()` for data frames
 #'
@@ -15,35 +15,34 @@ summary2 <- function(data) {
   types <- lapply(data, typeof)
 
   for (i in seq_along(out)) {
-    var  <- data[[i]]
+    vals <- data[[i]]
     type <- types[[i]]
-    n    <- length(var)
-    p_na <- mean(is.na(var))
-    var  <- var[!is.na(var)]
+    n    <- length(vals)
+    p_na <- mean(is.na(vals))
+    vals <- vals[!is.na(vals)]
 
-    if (length(var) == 0) {
-      out[[i]] <- NA
+    if (length(vals) == 0) {
+      out[[i]] <- list(n = n, p_na = p_na)
       next
     }
 
-    if (type == "double") {
+    if (type %in% c("double", "integer")) {
+
+      if (inherits(vals, "Date")) {
+        type <- 1
+      } else {
+        type <- 7
+      }
 
       probs <- c(0, 0.25, 0.5, 0.75, 1)
-      quantiles <- quantile(var, probs = probs, na.rm = TRUE)
+      quantiles <- quantile(vals, probs = probs, na.rm = TRUE, type = type)
       res <- list(n = n, p_na = p_na, quantiles = quantiles)
 
     } else if (type %in% c("character", "logical")) {
 
-      counts <- vctrs::vec_count(var, sort = "count")
-      counts$p <- counts$count / sum(counts$count)
-      res <- list(n = n, p_na = p_na, counts = dplyr::as_tibble(counts))
-
-    } else if (type == "integer") {
-
-      counts <- vctrs::vec_count(var, sort = "key")
-      counts$p <- counts$count / sum(counts$count)
-      counts$p_cume <- cumsum(counts$p)
-      res <- list(n = n, p_na = p_na, counts = dplyr::as_tibble(counts))
+      counts <- dplyr::count(dplyr::tibble(key = vals), .data$key, sort = TRUE)
+      counts$d <- counts$n / sum(counts$n)
+      res <- list(n = n, p_na = p_na, counts = counts)
 
     } else {
       res <- NA
