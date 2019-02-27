@@ -1,10 +1,9 @@
 # compare summary of data frames
 
+library(bench)
 library(dplyr)
 library(rwmisc)
 library(skimr)
-
-source("R/summary.R")
 
 n <- 1e6
 
