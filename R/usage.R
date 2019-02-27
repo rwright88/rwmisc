@@ -28,18 +28,18 @@ pkg_count_calls <- function(dir) {
   files <- list.files(dir_r, "\\.[R]$", full.names = TRUE, ignore.case = TRUE)
   lines <- lapply(files, readLines)
 
-  n_calls <- vector("list", length(calls))
-  n_calls <- setNames(n_calls, calls)
+  out <- vector("list", length(calls))
+  out <- setNames(out, calls)
 
   for (call in calls) {
-    n_calls[[call]] <- lapply(lines, function(.x) {
+    out[[call]] <- lapply(lines, function(.x) {
       sum(stringr::str_count(.x, pattern = call))
     })
-    n_calls[[call]] <- as.integer(n_calls[[call]])
+    out[[call]] <- as.integer(out[[call]])
   }
 
-  n_calls <- dplyr::as_tibble(n_calls)
-  n_calls$file <- basename(files)
-  n_calls <- n_calls[c(length(n_calls), 1:(length(n_calls) - 1))]
-  n_calls
+  out <- dplyr::as_tibble(out)
+  out$file <- basename(files)
+  out <- out[c(length(out), 1:(length(out) - 1))]
+  out
 }

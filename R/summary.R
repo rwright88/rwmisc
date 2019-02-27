@@ -12,6 +12,7 @@ summary2 <- function(data) {
   }
 
   out <- vector("list", length(data))
+  out <- setNames(out, names(data))
   types <- lapply(data, typeof)
 
   for (i in seq_along(out)) {
@@ -41,7 +42,7 @@ summary2 <- function(data) {
     } else if (type %in% c("character", "logical")) {
 
       counts <- dplyr::count(dplyr::tibble(key = vals), .data$key, sort = TRUE)
-      counts$d <- counts$n / sum(counts$n)
+      counts[["d"]] <- counts[["n"]] / sum(counts[["n"]])
       res <- list(n = n, p_na = p_na, counts = counts)
 
     } else {
@@ -51,6 +52,5 @@ summary2 <- function(data) {
     out[[i]] <- res
   }
 
-  names(out) <- names(data)
   out
 }
