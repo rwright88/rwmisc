@@ -1,5 +1,5 @@
 # TODO:
-# add options for reading delimited file (skip, etc)
+# add options for reading delimited file (skip, etc), index?
 
 #' Write data files to database table
 #'
@@ -11,16 +11,18 @@
 #' @param file_db Path of database
 #' @param table_name Database table name
 #' @param batch_size Number of data files to write to database table per batch
+#' @import data.table
 #' @export
 db_write_files <- function(files, file_db, table_name, batch_size = 1) {
-  files_exist <- all(vapply(files, FUN.VALUE = logical(1), FUN = file.exists))
+  n_files <- length(files)
+  if (length(files) < 1) {
+    stop("Length of files must be at least 1.", call. = FALSE)
+  }
 
+  files_exist <- all(vapply(files, FUN.VALUE = logical(1), FUN = file.exists))
   if (files_exist != TRUE) {
     stop("One or more of the files do not exist.", call. = FALSE)
   }
-
-  n_files <- length(files)
-  n_batches <- ceiling(n_files / batch_size)
 
   if (n_files > 1) {
     headers <- lapply(files, function(.x) {
@@ -37,8 +39,9 @@ db_write_files <- function(files, file_db, table_name, batch_size = 1) {
   if (file.exists(file_db)) {
     file.remove(file_db)
   }
-  con <- DBI::dbConnect(RSQLite::SQLite(), file_db)
 
+  con <- DBI::dbConnect(RSQLite::SQLite(), file_db)
+  n_batches <- ceiling(n_files / batch_size)
   var_order <- names(data.table::fread(files[1], nrows = 0, header = TRUE))
 
   for (i in seq_len(n_batches)) {
@@ -46,11 +49,13 @@ db_write_files <- function(files, file_db, table_name, batch_size = 1) {
     last <- min(first + batch_size - 1, n_files)
     files_batch <- files[first:last]
 
-    data <- purrr::map_dfr(files_batch, function(.x) {
+    data <- lapply(files_batch, function(.x) {
       data <- data.table::fread(.x, header = TRUE)
       data <- data[, ..var_order]
       data
     })
+
+    data <- data.table::rbindlist(data)
 
     DBI::dbWriteTable(
       conn = con,
@@ -61,7 +66,5 @@ db_write_files <- function(files, file_db, table_name, batch_size = 1) {
     )
   }
 
-  statement <- paste0("CREATE INDEX idx1 ON ", table_name, "(id)")
-  DBI::dbExecute(con, statement = statement)
   DBI::dbDisconnect(con)
 }
