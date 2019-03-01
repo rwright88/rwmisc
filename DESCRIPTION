@@ -13,7 +13,6 @@ Imports:
     DBI,
     dplyr,
     ggplot2,
-    purrr,
     RSQLite,
     stringr
 Encoding: UTF-8
