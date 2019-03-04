@@ -11,7 +11,6 @@
 #' @param file_db Path of database
 #' @param table_name Database table name
 #' @param batch_size Number of data files to write to database table per batch
-#' @import data.table
 #' @export
 db_write_files <- function(files, file_db, table_name, batch_size = 1) {
   n_files <- length(files)
