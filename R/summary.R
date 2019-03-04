@@ -19,11 +19,11 @@ summary2 <- function(data) {
     vals <- data[[i]]
     type <- types[[i]]
     n    <- length(vals)
-    p_na <- mean(is.na(vals))
+    d_na <- mean(is.na(vals))
     vals <- vals[!is.na(vals)]
 
     if (length(vals) == 0) {
-      out[[i]] <- list(n = n, p_na = p_na)
+      out[[i]] <- list(n = n, d_na = d_na)
       next
     }
 
@@ -37,13 +37,19 @@ summary2 <- function(data) {
 
       probs <- c(0, 0.25, 0.5, 0.75, 1)
       quantiles <- quantile(vals, probs = probs, na.rm = TRUE, type = type)
-      res <- list(n = n, p_na = p_na, quantiles = quantiles)
+      res <- list(type = type, n = n, d_na = d_na, quantiles = quantiles)
 
     } else if (type %in% c("character", "logical")) {
 
-      counts <- dplyr::count(dplyr::tibble(key = vals), .data$key, sort = TRUE)
-      counts[["d"]] <- counts[["n"]] / sum(counts[["n"]])
-      res <- list(n = n, p_na = p_na, counts = counts)
+      n_unique <- length(unique(vals))
+
+      if (n_unique >= 1e3) {
+        res <- list(type = type, n = n, d_na = d_na, n_unique = n_unique)
+      } else {
+        counts <- dplyr::count(dplyr::tibble(key = vals), .data$key, sort = TRUE)
+        counts$d <- counts$n / sum(counts$n)
+        res <- list(type = type, n = n, d_na = d_na, counts = counts)
+      }
 
     } else {
       res <- NA
