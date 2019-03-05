@@ -1,6 +1,5 @@
 ideas:
 
-text file operations
-count vector
-database chunks
 benchmark funs
+different way to count uniques of character vectors in summary2()
+fix files with awk or similar, other file operations

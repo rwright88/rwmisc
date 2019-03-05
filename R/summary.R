@@ -8,7 +8,7 @@
 #' @export
 summary2 <- function(data) {
   if (!is.data.frame(data)) {
-    stop("data must be a data frame", call. = FALSE)
+    stop("`data` must be a data frame", call. = FALSE)
   }
 
   out <- vector("list", length(data))
