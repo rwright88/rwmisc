@@ -1,62 +1,135 @@
 # TODO
-# summary2() is unfinished, must work with classes such as Date, use table()?
+# summary2() is unfinished:
+# - how many sigfig digits?
+# - other types like list, complex, etc.
+# - classes such as Date, factor, etc.
 
 #' Alternative to `base::summary()` for data frames
 #'
 #' @param data A data frame
-#' @return A list
+#' @param digits Number of significant digits to display for mean and quantiles
+#' @return A data frame
 #' @export
-summary2 <- function(data) {
+summary2 <- function(data, digits = 4) {
   if (!is.data.frame(data)) {
     stop("`data` must be a data frame", call. = FALSE)
+  }
+  if (ncol(data) < 1) {
+    return("`data` has 0 columns")
   }
 
   out <- vector("list", length(data))
   out <- setNames(out, names(data))
-  types <- lapply(data, typeof)
+  types <- vapply(data, FUN.VALUE = character(1), FUN = typeof)
+  n <- nrow(data)
+
+  template <- list(
+    d_na = NA,
+    n_unique = NA,
+    mean = NA,
+    p0 = NA,
+    p25 = NA,
+    p50 = NA,
+    p75 = NA,
+    p100 = NA
+  )
 
   for (i in seq_along(out)) {
-    vals <- data[[i]]
     type <- types[[i]]
-    n    <- length(vals)
+    big4 <- c("logical", "integer", "double", "character")
+
+    if (!(type %in% big4)) {
+      out[[i]] <- template
+      next
+    }
+
+    vals <- data[[i]]
     d_na <- mean(is.na(vals))
     vals <- vals[!is.na(vals)]
 
     if (length(vals) == 0) {
-      out[[i]] <- list(n = n, d_na = d_na)
+      res <- template
+      res$d_na <- d_na
+      out[[i]] <- res
       next
+    }
+
+    if (inherits(vals, "factor")) {
+      type <- "character"
     }
 
     if (type %in% c("double", "integer")) {
 
       if (inherits(vals, "Date")) {
-        type <- 1
+        alg <- 1
       } else {
-        type <- 7
+        alg <- 7
       }
 
+      mean1 <- mean(vals)
       probs <- c(0, 0.25, 0.5, 0.75, 1)
-      quantiles <- quantile(vals, probs = probs, na.rm = TRUE, type = type)
-      res <- list(type = type, n = n, d_na = d_na, quantiles = quantiles)
+      quantiles <- quantile(vals, probs = probs, na.rm = TRUE, type = alg)
 
-    } else if (type %in% c("character", "logical")) {
+      out[[i]] <- list(
+        d_na = d_na,
+        n_unique = NA,
+        mean = mean1,
+        p0 = quantiles[1],
+        p25 = quantiles[2],
+        p50 = quantiles[3],
+        p75 = quantiles[4],
+        p100 = quantiles[5]
+      )
+
+    } else if (type == "logical") {
+
+      n_unique <- length(unique(vals))
+      mean1 <- mean(vals)
+
+      out[[i]] <- list(
+        d_na = d_na,
+        n_unique = n_unique,
+        mean = mean1,
+        p0 = NA,
+        p25 = NA,
+        p50 = NA,
+        p75 = NA,
+        p100 = NA
+      )
+
+    } else if (type == "character") {
 
       n_unique <- length(unique(vals))
 
-      if (n_unique >= 1e3) {
-        res <- list(type = type, n = n, d_na = d_na, n_unique = n_unique)
-      } else {
-        counts <- dplyr::count(dplyr::tibble(key = vals), .data$key, sort = TRUE)
-        counts$d <- counts$n / sum(counts$n)
-        res <- list(type = type, n = n, d_na = d_na, counts = counts)
-      }
-
-    } else {
-      res <- NA
+      out[[i]] <- list(
+        d_na = d_na,
+        n_unique = n_unique,
+        mean = NA,
+        p0 = NA,
+        p25 = NA,
+        p50 = NA,
+        p75 = NA,
+        p100 = NA
+      )
     }
-
-    out[[i]] <- res
   }
 
+  types[types == "logical"]   <- "lgl"
+  types[types == "integer"]   <- "int"
+  types[types == "double"]    <- "dbl"
+  types[types == "character"] <- "chr"
+  types[types == "complex"]   <- "cpl"
+
+  out <- data.table::rbindlist(out)
+  out$name <- names(data)
+  out$type <- types
+  out$n <- n
+  out$d_na <- round(out$d_na, 4)
+
+  for (var in c("mean", "p0", "p25", "p50", "p75", "p100")) {
+    out[[var]] <- signif(out[[var]], digits = digits)
+  }
+
+  out <- out[, c("name", "type", "n", "d_na", "n_unique", "mean", "p0", "p25", "p50", "p75", "p100")]
   out
 }

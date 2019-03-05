@@ -1,19 +1,27 @@
 # compare summary of data frames
 
-library(bench)
-library(dplyr)
+library(tidyverse)
 library(rwmisc)
 library(skimr)
 
-n <- 1e6
+# funs --------------------------------------------------------------------
 
-dat <- tibble(
-  l = sample(c(TRUE, FALSE), n, replace = TRUE),
-  i = sample(n),
-  d = runif(n),
-  c = sample(letters, n, replace = TRUE)
-)
+create_data <- function(n_rows, reps) {
+  dat <- purrr::map_dfc(seq_len(reps), function(.x) {
+    tibble(
+      logical = sample(c(TRUE, FALSE), n_rows, replace = TRUE),
+      integer = sample(n_rows),
+      double = runif(n_rows),
+      character = sample(letters, n_rows, replace = TRUE)
+    )
+  })
 
+  dat
+}
+
+# run ---------------------------------------------------------------------
+
+dat <- create_data(n_rows = 1e6, reps = 3)
 dat
 
 summary(dat)
@@ -25,5 +33,5 @@ bench::mark(
   summary2(dat),
   skim(dat),
   check = FALSE,
-  iterations = 5
+  iterations = 3
 )

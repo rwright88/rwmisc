@@ -4,13 +4,15 @@
 \alias{summary2}
 \title{Alternative to \code{base::summary()} for data frames}
 \usage{
-summary2(data)
+summary2(data, digits = 4)
 }
 \arguments{
 \item{data}{A data frame}
+
+\item{digits}{Number of significant digits to display for mean and quantiles}
 }
 \value{
-A list
+A data frame
 }
 \description{
 Alternative to \code{base::summary()} for data frames
