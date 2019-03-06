@@ -61,12 +61,8 @@ summary2 <- function(data, digits = 4) {
     if (type %in% c("double", "integer")) {
 
       if (inherits(vals, c("Date", "POSIXct", "POSIXlt", "POSIXt"))) {
+        vals <- as.numeric(vals)
         alg <- 1
-
-        # temp
-        out[[i]] <- template
-        next
-
       } else {
         alg <- 7
       }
@@ -139,12 +135,16 @@ summary2 <- function(data, digits = 4) {
   out
 }
 
-summary2_by <- function(data, by, var) {
+# for now, only by 1 variable
+summary2_by <- function(data, by, vars) {
+  if (!(length(by) == 1 & by %in% names(data))) {
+    stop("`by` must be a single variable in `data`.", call. = FALSE)
+  }
+
   groups <- split(data, data[[by]])
 
   out <- lapply(groups, function(.x) {
-    res <- summary2(.x)
-    res[res$name == var]
+    summary2(.x[vars])
   })
 
   out <- data.table::rbindlist(out)
