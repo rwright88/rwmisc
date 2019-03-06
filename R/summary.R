@@ -135,18 +135,31 @@ summary2 <- function(data, digits = 4) {
   out
 }
 
-# for now, only by 1 variable
-summary2_by <- function(data, by, vars) {
-  if (!(length(by) == 1 & by %in% names(data))) {
+#' Summary of data frame by a variable
+#'
+#' @param data A data frame
+#' @param by A length one character vector of a variable in `data` to group by
+#' @param vars Character vector of variables in `data` to keep in summary
+#' @param digits Number of significant digits to display for mean and quantiles
+#' @return A data frame
+#' @export
+summary2_by <- function(data, by, vars, digits = 4) {
+  names1 <- names(data)
+
+  if (!(length(by) == 1 & by %in% names1)) {
     stop("`by` must be a single variable in `data`.", call. = FALSE)
+  }
+  if (!(all(vars %in% names1))) {
+    stop("`vars` must be in `data`", call. = FALSE)
   }
 
   groups <- split(data, data[[by]])
 
   out <- lapply(groups, function(.x) {
-    summary2(.x[vars])
+    summary2(.x[vars], digits = digits)
   })
 
   out <- data.table::rbindlist(out)
+  out[[by]] <- rep(names(groups), each = length(vars))
   out
 }
