@@ -60,8 +60,13 @@ summary2 <- function(data, digits = 4) {
 
     if (type %in% c("double", "integer")) {
 
-      if (inherits(vals, "Date")) {
+      if (inherits(vals, c("Date", "POSIXct", "POSIXlt", "POSIXt"))) {
         alg <- 1
+
+        # temp
+        out[[i]] <- template
+        next
+
       } else {
         alg <- 7
       }
@@ -131,5 +136,17 @@ summary2 <- function(data, digits = 4) {
   }
 
   out <- out[, c("name", "type", "n", "d_na", "n_unique", "mean", "p0", "p25", "p50", "p75", "p100")]
+  out
+}
+
+summary2_by <- function(data, by, var) {
+  groups <- split(data, data[[by]])
+
+  out <- lapply(groups, function(.x) {
+    res <- summary2(.x)
+    res[res$name == var]
+  })
+
+  out <- data.table::rbindlist(out)
   out
 }
