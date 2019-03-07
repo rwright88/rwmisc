@@ -160,6 +160,8 @@ summary2_by <- function(data, by, vars, digits = 4) {
   })
 
   out <- data.table::rbindlist(out)
+  ord <- c(by, names(out))
   out[[by]] <- rep(names(groups), each = length(vars))
+  out <- out[, ..ord]
   out
 }
