@@ -25,11 +25,11 @@ fin_amort_pay <- function(principal, rate, n) {
 
 #' Calculate estimated interest rate of amortization
 #'
-#' @param principal Principal starting amount
-#' @param payment Payment per period
-#' @param n Number of periods
-#' @param tol Tolerance
-#' @return Numeric vector of interest rate per period
+#' @param principal Principal starting amount, single value
+#' @param payment Payment per period, single value
+#' @param n Number of periods, single value
+#' @param tol Tolerance, single value
+#' @return Single value numeric vector of interest rate per period
 #' @export
 fin_amort_rate <- function(principal, payment, n, tol = 1e-5) {
   stopifnot(

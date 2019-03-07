@@ -1,8 +1,12 @@
 # TODO
-# summary2() is unfinished:
+# summary2():
 # - how many sigfig digits?
 # - other types like list, complex, etc.
 # - classes such as Date, factor, etc.
+# summary2_by():
+# - split benchmark
+# - multiple group vars
+# - NA level in group
 
 #' Alternative to `base::summary()` for data frames
 #'
@@ -135,7 +139,7 @@ summary2 <- function(data, digits = 4) {
   out
 }
 
-#' Summary of data frame by a variable
+#' Alternative to `base::summary()` for data frames, by groups
 #'
 #' @param data A data frame
 #' @param by A length one character vector of a variable in `data` to group by
