@@ -2,17 +2,17 @@
 % Please edit documentation in R/usage.R
 \name{pkg_count_calls}
 \alias{pkg_count_calls}
-\title{Count function calls of package imports from source}
+\title{Count function calls of package imports from package source}
 \usage{
 pkg_count_calls(dir)
 }
 \arguments{
-\item{dir}{Directory of package}
+\item{dir}{Directory of package source}
 }
 \value{
 Data frame of rows as files in directory \code{R} and columns as function
 calls from a package that is imported.
 }
 \description{
-Count function calls of package imports from source
+Count function calls of package imports from package source
 }
