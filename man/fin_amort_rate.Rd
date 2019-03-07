@@ -7,16 +7,16 @@
 fin_amort_rate(principal, payment, n, tol = 1e-05)
 }
 \arguments{
-\item{principal}{Principal starting amount}
+\item{principal}{Principal starting amount, single value}
 
-\item{payment}{Payment per period}
+\item{payment}{Payment per period, single value}
 
-\item{n}{Number of periods}
+\item{n}{Number of periods, single value}
 
-\item{tol}{Tolerance}
+\item{tol}{Tolerance, single value}
 }
 \value{
-Numeric vector of interest rate per period
+Single value numeric vector of interest rate per period
 }
 \description{
 Calculate estimated interest rate of amortization

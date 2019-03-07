@@ -1,8 +1,12 @@
 # TODO
-# summary2() is unfinished:
+# summary2():
 # - how many sigfig digits?
 # - other types like list, complex, etc.
 # - classes such as Date, factor, etc.
+# summary2_by():
+# - split benchmark
+# - multiple group vars
+# - NA level in group
 
 #' Alternative to `base::summary()` for data frames
 #'
@@ -60,7 +64,8 @@ summary2 <- function(data, digits = 4) {
 
     if (type %in% c("double", "integer")) {
 
-      if (inherits(vals, "Date")) {
+      if (inherits(vals, c("Date", "POSIXct", "POSIXlt", "POSIXt"))) {
+        vals <- as.numeric(vals)
         alg <- 1
       } else {
         alg <- 7
@@ -131,5 +136,36 @@ summary2 <- function(data, digits = 4) {
   }
 
   out <- out[, c("name", "type", "n", "d_na", "n_unique", "mean", "p0", "p25", "p50", "p75", "p100")]
+  out
+}
+
+#' Alternative to `base::summary()` for data frames, by groups
+#'
+#' @param data A data frame
+#' @param by A length one character vector of a variable in `data` to group by
+#' @param vars Character vector of variables in `data` to keep in summary
+#' @param digits Number of significant digits to display for mean and quantiles
+#' @return A data frame
+#' @export
+summary2_by <- function(data, by, vars, digits = 4) {
+  names1 <- names(data)
+
+  if (!(length(by) == 1 & by %in% names1)) {
+    stop("`by` must be a single variable in `data`.", call. = FALSE)
+  }
+  if (!(all(vars %in% names1))) {
+    stop("`vars` must be in `data`", call. = FALSE)
+  }
+
+  groups <- split(data, data[[by]])
+
+  out <- lapply(groups, function(.x) {
+    summary2(.x[vars], digits = digits)
+  })
+
+  out <- data.table::rbindlist(out)
+  ord <- c(by, names(out))
+  out[[by]] <- rep(names(groups), each = length(vars))
+  out <- out[, ..ord]
   out
 }

@@ -1,9 +1,9 @@
 # TODO
 # pkg_count_calls() is unfinished
 
-#' Count function calls of package imports from source
+#' Count function calls of package imports from package source
 #'
-#' @param dir Directory of package
+#' @param dir Directory of package source
 #' @return Data frame of rows as files in directory `R` and columns as function
 #'   calls from a package that is imported.
 #' @export
@@ -32,10 +32,9 @@ pkg_count_calls <- function(dir) {
   out <- setNames(out, calls)
 
   for (call in calls) {
-    out[[call]] <- lapply(lines, function(.x) {
+    out[[call]] <- vapply(lines, FUN.VALUE = integer(1), FUN = function(.x) {
       sum(stringr::str_count(.x, pattern = call))
     })
-    out[[call]] <- as.integer(out[[call]])
   }
 
   out <- dplyr::as_tibble(out)

@@ -10,7 +10,7 @@ create_data <- function(n_rows, reps) {
   dat <- purrr::map_dfc(seq_len(reps), function(.x) {
     tibble(
       logical = sample(c(TRUE, FALSE), n_rows, replace = TRUE),
-      integer = sample(n_rows),
+      integer = sample(100, n_rows, replace = TRUE),
       double = runif(n_rows),
       character = sample(letters, n_rows, replace = TRUE)
     )
@@ -21,7 +21,7 @@ create_data <- function(n_rows, reps) {
 
 # run ---------------------------------------------------------------------
 
-dat <- create_data(n_rows = 1e6, reps = 3)
+dat <- create_data(n_rows = 1e6, reps = 5)
 dat
 
 summary(dat)
