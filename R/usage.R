@@ -37,7 +37,7 @@ pkg_count_calls <- function(dir) {
     })
   }
 
-  out <- dplyr::as_tibble(out)
+  out <- cbind.data.frame(out)
   out$file <- basename(files)
   out <- out[c(length(out), 1:(length(out) - 1))]
   out
