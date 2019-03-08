@@ -30,10 +30,9 @@ f_floop <- function(data, by) {
   out
 }
 
-# unfinished
-f_dtabl <- function(data, by) {
+f_dtab1 <- function(data, by) {
   data <- as.data.table(data)
-  out <- data[, list(zzz = list(a, b, x)), by = a]
+  out <- split(data, by = by)
   out
 }
 
@@ -47,7 +46,7 @@ f_dplyr <- function(data, by) {
 bench::mark(
   f_split(dat, c("a", "b")),
   # f_floop(dat, c("a", "b")),
-  # f_dtabl(dat, c("a", "b")),
+  f_dtab1(dat, c("a", "b")),
   f_dplyr(dat, c("a", "b")),
   check = FALSE,
   iterations = 5

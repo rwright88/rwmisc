@@ -148,12 +148,12 @@ summary2 <- function(data, digits = 4) {
 #' @return A data frame
 #' @export
 summary2_by <- function(data, by, vars, digits = 4) {
-  names1 <- names(data)
+  nms <- names(data)
 
-  if (!(length(by) == 1 & by %in% names1)) {
+  if (!(length(by) == 1 & by %in% nms)) {
     stop("`by` must be a single variable in `data`.", call. = FALSE)
   }
-  if (!(all(vars %in% names1))) {
+  if (!(all(vars %in% nms))) {
     stop("`vars` must be in `data`", call. = FALSE)
   }
 
