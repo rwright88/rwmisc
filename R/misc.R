@@ -4,8 +4,8 @@
 #' @return A single logical value.
 #' @export
 identical_all <- function(x) {
-  if (length(x) < 2) {
-    stop("Length of `x` must be at least 2.", call. = FALSE)
+  if (!is.list(x) || length(x) < 2) {
+    stop("`x` must be a list of at least length 2.", call. = FALSE)
   }
 
   all(vapply(x[-1], FUN.VALUE = logical(1), FUN = function(.x) {
