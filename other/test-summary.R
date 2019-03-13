@@ -1,14 +1,19 @@
 # other types and classes for summary2()
 
-x <- list(
-  "TRUE" = TRUE,
-  "1L" = 1L,
-  "1.1" = 1.1,
-  "a" = "a",
-  "complex(1, 1, 1)" = complex(1, 1, 1),
-  "raw(1)" = raw(1),
+library(dplyr)
+library(rwmisc)
 
-  "factor(1)" = factor(1),
+n <- 1e6
+
+x <- list(
+  "lgl" = sample(c(TRUE, FALSE, NA), n, replace = TRUE),
+  "int" = sample(c(1:10, NA), n, replace = TRUE),
+  "dbl" = rnorm(n, 5, 1),
+  "chr" = sample(c(letters[1:10], NA), n, replace = TRUE),
+  "cpl" = complex(1, 1, 1),
+  "raw" = raw(1),
+
+  "fct" = factor(sample(c(letters[1:10], NA), n, replace = TRUE)),
   "Sys.Date()" = Sys.Date(),
   "lubridate::today()" = lubridate::today(),
   "Sys.time()" = Sys.time(),
@@ -16,11 +21,11 @@ x <- list(
   # zoo,
   # xts,
 
-  "list(1)" = list(1)
+  "list" = list(1)
 )
 
-lapply(x, typeof)
-lapply(x, class)
+str(lapply(x, typeof))
+str(lapply(x, class))
 
 df <- dplyr::as_tibble(x)
 dplyr::glimpse(df)
