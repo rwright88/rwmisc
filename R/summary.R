@@ -1,8 +1,6 @@
 # TODO
 # summary2():
-# - how many sigfig digits?
-# - other types like list, complex, etc.
-# - classes such as Date, factor, etc.
+# - work for all types and classes
 # summary2_by():
 # - split benchmark
 # - multiple group vars
@@ -23,37 +21,16 @@ summary2 <- function(data, digits = 4) {
   }
 
   out <- vector("list", length(data))
-  out <- setNames(out, names(data))
   types <- vapply(data, FUN.VALUE = character(1), FUN = typeof)
   n <- nrow(data)
 
-  template <- list(
-    d_na = NA,
-    n_unique = NA,
-    mean = NA,
-    p0 = NA,
-    p25 = NA,
-    p50 = NA,
-    p75 = NA,
-    p100 = NA
-  )
-
   for (i in seq_along(out)) {
     type <- types[[i]]
-    big4 <- c("logical", "integer", "double", "character")
-
-    if (!(type %in% big4)) {
-      out[[i]] <- template
-      next
-    }
-
     vals <- data[[i]]
-    d_na <- mean(is.na(vals))
-    vals <- vals[!is.na(vals)]
 
-    if (length(vals) == 0) {
-      res <- template
-      res$d_na <- d_na
+    if (all(is.na(vals))) {
+      res <- summary_template()
+      res$d_na <- 1
       out[[i]] <- res
       next
     }
@@ -63,71 +40,19 @@ summary2 <- function(data, digits = 4) {
     }
 
     if (type %in% c("double", "integer")) {
-
-      if (inherits(vals, c("Date", "POSIXct", "POSIXlt", "POSIXt"))) {
-        vals <- as.numeric(vals)
-        alg <- 1
-      } else {
-        alg <- 7
-      }
-
-      mean1 <- mean(vals)
-      probs <- c(0, 0.25, 0.5, 0.75, 1)
-      quantiles <- quantile(vals, probs = probs, na.rm = TRUE, type = alg)
-
-      out[[i]] <- list(
-        d_na = d_na,
-        n_unique = NA,
-        mean = mean1,
-        p0 = quantiles[1],
-        p25 = quantiles[2],
-        p50 = quantiles[3],
-        p75 = quantiles[4],
-        p100 = quantiles[5]
-      )
-
+      out[[i]] <- summary_dbl(vals)
     } else if (type == "logical") {
-
-      n_unique <- length(unique(vals))
-      mean1 <- mean(vals)
-
-      out[[i]] <- list(
-        d_na = d_na,
-        n_unique = n_unique,
-        mean = mean1,
-        p0 = NA,
-        p25 = NA,
-        p50 = NA,
-        p75 = NA,
-        p100 = NA
-      )
-
+      out[[i]] <- summary_lgl(vals)
     } else if (type == "character") {
-
-      n_unique <- length(unique(vals))
-
-      out[[i]] <- list(
-        d_na = d_na,
-        n_unique = n_unique,
-        mean = NA,
-        p0 = NA,
-        p25 = NA,
-        p50 = NA,
-        p75 = NA,
-        p100 = NA
-      )
+      out[[i]] <- summary_chr(vals)
+    } else {
+      out[[i]] <- summary_template()
     }
   }
 
-  types[types == "logical"]   <- "lgl"
-  types[types == "integer"]   <- "int"
-  types[types == "double"]    <- "dbl"
-  types[types == "character"] <- "chr"
-  types[types == "complex"]   <- "cpl"
-
   out <- data.table::rbindlist(out)
   out$name <- names(data)
-  out$type <- types
+  out$type <- shorten_type(types)
   out$n <- n
   out$d_na <- round(out$d_na, 4)
 
@@ -168,4 +93,88 @@ summary2_by <- function(data, by, vars, digits = 4) {
   out[[by]] <- rep(names(groups), each = length(vars))
   out <- out[, ..ord]
   out
+}
+
+summary_dbl <- function(x) {
+  d_na <- mean(is.na(x))
+  x <- x[!is.na(x)]
+
+  if (inherits(x, c("Date", "POSIXct", "POSIXlt", "POSIXt"))) {
+    x <- as.numeric(x)
+    alg <- 1
+  } else {
+    alg <- 7
+  }
+
+  mean1 <- mean(x)
+  probs <- c(0, 0.25, 0.5, 0.75, 1)
+  quantiles <- quantile(x, probs = probs, na.rm = TRUE, type = alg)
+
+  list(
+    d_na = d_na,
+    n_unique = NA,
+    mean = mean1,
+    p0 = quantiles[1],
+    p25 = quantiles[2],
+    p50 = quantiles[3],
+    p75 = quantiles[4],
+    p100 = quantiles[5]
+  )
+}
+
+summary_lgl <- function(x) {
+  d_na <- mean(is.na(x))
+  x <- x[!is.na(x)]
+  n_unique <- length(unique(x))
+  mean1 <- mean(x)
+
+  list(
+    d_na = d_na,
+    n_unique = n_unique,
+    mean = mean1,
+    p0 = NA,
+    p25 = NA,
+    p50 = NA,
+    p75 = NA,
+    p100 = NA
+  )
+}
+
+summary_chr <- function(x) {
+  d_na <- mean(is.na(x))
+  x <- x[!is.na(x)]
+  n_unique <- length(unique(x))
+
+  list(
+    d_na = d_na,
+    n_unique = n_unique,
+    mean = NA,
+    p0 = NA,
+    p25 = NA,
+    p50 = NA,
+    p75 = NA,
+    p100 = NA
+  )
+}
+
+summary_template <- function() {
+  list(
+    d_na = NA,
+    n_unique = NA,
+    mean = NA,
+    p0 = NA,
+    p25 = NA,
+    p50 = NA,
+    p75 = NA,
+    p100 = NA
+  )
+}
+
+shorten_type <- function(x) {
+  x[x == "logical"]   <- "lgl"
+  x[x == "integer"]   <- "int"
+  x[x == "double"]    <- "dbl"
+  x[x == "character"] <- "chr"
+  x[x == "complex"]   <- "cpl"
+  x
 }

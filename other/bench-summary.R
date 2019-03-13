@@ -7,12 +7,12 @@ library(skimr)
 # funs --------------------------------------------------------------------
 
 create_data <- function(n_rows, reps) {
-  dat <- purrr::map_dfc(seq_len(reps), function(.x) {
+  dat <- map_dfc(seq_len(reps), function(.x) {
     tibble(
-      logical = sample(c(TRUE, FALSE), n_rows, replace = TRUE),
-      integer = sample(100, n_rows, replace = TRUE),
-      double = runif(n_rows),
-      character = sample(letters, n_rows, replace = TRUE)
+      logical = sample(c(TRUE, FALSE, NA), n_rows, replace = TRUE),
+      integer = sample(c(1:10, NA), n_rows, replace = TRUE),
+      double = rnorm(n_rows, mean = 5, sd = 1),
+      character = sample(c(letters[1:10], NA), n_rows, replace = TRUE)
     )
   })
 
