@@ -75,7 +75,7 @@ summary2 <- function(data, digits = 4) {
 summary2_by <- function(data, by, vars, digits = 4) {
   nms <- names(data)
 
-  if (!(length(by) == 1 & by %in% nms)) {
+  if (!(length(by) == 1 && all(by %in% nms))) {
     stop("`by` must be a single variable in `data`.", call. = FALSE)
   }
   if (!(all(vars %in% nms))) {
