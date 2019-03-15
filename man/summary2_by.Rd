@@ -4,7 +4,7 @@
 \alias{summary2_by}
 \title{Alternative to \code{base::summary()} for data frames, by groups}
 \usage{
-summary2_by(data, by, vars, digits = 4)
+summary2_by(data, by, vars)
 }
 \arguments{
 \item{data}{A data frame}
@@ -12,8 +12,6 @@ summary2_by(data, by, vars, digits = 4)
 \item{by}{A length one character vector of a variable in \code{data} to group by}
 
 \item{vars}{Character vector of variables in \code{data} to keep in summary}
-
-\item{digits}{Number of significant digits to display for mean and quantiles}
 }
 \value{
 A data frame

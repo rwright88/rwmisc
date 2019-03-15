@@ -4,10 +4,12 @@
 \alias{identical_all}
 \title{Test objects in list for exact equality}
 \usage{
-identical_all(x)
+identical_all(x, ...)
 }
 \arguments{
 \item{x}{List of objects}
+
+\item{...}{Additional arguments passed on to \code{identical()}}
 }
 \value{
 A single logical value.

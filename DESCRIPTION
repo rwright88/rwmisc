@@ -11,6 +11,7 @@ License: MIT + file LICENSE
 Imports: 
     data.table,
     DBI,
+    dplyr,
     ggplot2,
     RSQLite,
     stringr

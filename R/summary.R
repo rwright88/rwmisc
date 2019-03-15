@@ -9,10 +9,9 @@
 #' Alternative to `base::summary()` for data frames
 #'
 #' @param data A data frame
-#' @param digits Number of significant digits to display for mean and quantiles
 #' @return A data frame
 #' @export
-summary2 <- function(data, digits = 4) {
+summary2 <- function(data) {
   if (!is.data.frame(data)) {
     stop("`data` must be a data frame", call. = FALSE)
   }
@@ -50,17 +49,12 @@ summary2 <- function(data, digits = 4) {
     }
   }
 
-  out <- data.table::rbindlist(out)
+  out <- dplyr::bind_rows(out)
   out$name <- names(data)
   out$type <- shorten_type(types)
   out$n <- n
-  out$d_na <- round(out$d_na, 4)
-
-  for (var in c("mean", "p0", "p25", "p50", "p75", "p100")) {
-    out[[var]] <- signif(out[[var]], digits = digits)
-  }
-
-  out <- out[, c("name", "type", "n", "d_na", "n_unique", "mean", "p0", "p25", "p50", "p75", "p100")]
+  ord <- c("name", "type", "n", "d_na", "n_unique", "mean", "p0", "p25", "p50", "p75", "p100")
+  out <- out[, ord]
   out
 }
 
@@ -69,10 +63,9 @@ summary2 <- function(data, digits = 4) {
 #' @param data A data frame
 #' @param by A length one character vector of a variable in `data` to group by
 #' @param vars Character vector of variables in `data` to keep in summary
-#' @param digits Number of significant digits to display for mean and quantiles
 #' @return A data frame
 #' @export
-summary2_by <- function(data, by, vars, digits = 4) {
+summary2_by <- function(data, by, vars) {
   nms <- names(data)
 
   if (!(length(by) == 1 && all(by %in% nms))) {
@@ -85,13 +78,13 @@ summary2_by <- function(data, by, vars, digits = 4) {
   groups <- split(data, data[[by]])
 
   out <- lapply(groups, function(.x) {
-    summary2(.x[vars], digits = digits)
+    summary2(.x[vars])
   })
 
-  out <- data.table::rbindlist(out)
+  out <- dplyr::bind_rows(out)
   ord <- c(by, names(out))
   out[[by]] <- rep(names(groups), each = length(vars))
-  out <- out[, ..ord]
+  out <- out[, ord]
   out
 }
 
