@@ -43,6 +43,8 @@ db_write_files <- function(files, file_db, table_name, batch_size = 1) {
   }
 
   con <- DBI::dbConnect(RSQLite::SQLite(), file_db)
+  on.exit(DBI::dbDisconnect(con))
+
   n_batches <- ceiling(n_files / batch_size)
   var_order <- names(data.table::fread(files[1], nrows = 0, header = TRUE))
 
@@ -67,6 +69,4 @@ db_write_files <- function(files, file_db, table_name, batch_size = 1) {
       append = TRUE
     )
   }
-
-  DBI::dbDisconnect(con)
 }
