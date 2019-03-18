@@ -17,7 +17,7 @@ db_write_files <- function(files, file_db, table_name, batch_size = 1) {
   if (length(files) < 1) {
     stop("Length of `files` must be at least 1.", call. = FALSE)
   }
-  if (!(batch_size %in% 1:n_files)) {
+  if (!(batch_size %in% seq_len(n_files))) {
     stop("`batch_size` must be between 1 and the number of `files`.")
   }
 

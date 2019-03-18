@@ -12,26 +12,22 @@
 #' @return A data frame
 #' @export
 summary2 <- function(data) {
-  if (!is.data.frame(data)) {
-    stop("`data` must be a data frame", call. = FALSE)
-  }
+  stopifnot(is.data.frame(data))
+
   if (ncol(data) < 1) {
     return("`data` has 0 columns")
   }
 
-  out <- vector("list", length(data))
   types <- vapply(data, FUN.VALUE = character(1), FUN = typeof)
   n <- nrow(data)
 
-  for (i in seq_along(out)) {
-    type <- types[[i]]
-    vals <- data[[i]]
+  out <- lapply(data, function(vals) {
+    type <- typeof(vals)
 
     if (all(is.na(vals))) {
-      res <- summary_template()
-      res$d_na <- 1
-      out[[i]] <- res
-      next
+      out <- summary_template()
+      out$d_na <- 1
+      return(out)
     }
 
     if (inherits(vals, "factor")) {
@@ -39,15 +35,15 @@ summary2 <- function(data) {
     }
 
     if (type %in% c("double", "integer")) {
-      out[[i]] <- summary_dbl(vals)
+      summary_dbl(vals)
     } else if (type == "logical") {
-      out[[i]] <- summary_lgl(vals)
+      summary_lgl(vals)
     } else if (type == "character") {
-      out[[i]] <- summary_chr(vals)
+      summary_chr(vals)
     } else {
-      out[[i]] <- summary_template()
+      summary_template()
     }
-  }
+  })
 
   out <- dplyr::bind_rows(out)
   out$name <- names(data)
