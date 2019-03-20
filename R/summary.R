@@ -1,12 +1,10 @@
 # TODO
-# summary2():
-# - work for all types and classes
-# summary2_by():
-# - split benchmark
-# - multiple group vars
-# - NA level in group
+# summary2() work for all types and classes
+# summary2_by() split benchmark
+# summary2_by() multiple group vars
+# summary2_by() NA level in group
 
-#' Alternative to `base::summary()` for data frames
+#' Alternative to summary for data frames
 #'
 #' @param data A data frame
 #' @return A data frame
@@ -54,7 +52,7 @@ summary2 <- function(data) {
   out
 }
 
-#' Alternative to `base::summary()` for data frames, by groups
+#' Alternative to summary for data frames, by groups
 #'
 #' @param data A data frame
 #' @param by A length one character vector of a variable in `data` to group by

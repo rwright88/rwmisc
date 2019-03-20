@@ -1,6 +1,3 @@
-# TODO
-# pkg_count_calls() is unfinished
-
 #' Count function calls of package imports from package source
 #'
 #' @param dir Directory of package source

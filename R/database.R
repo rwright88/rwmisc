@@ -6,7 +6,6 @@
 #' Write delimited data files to database table in batches. Data files must have
 #' the same headers. If the database file already exists, it will be deleted
 #' first.
-#'
 #' @param files Paths of delimited data files
 #' @param file_db Path of database
 #' @param table_name Database table name
