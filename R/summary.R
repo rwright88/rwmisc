@@ -83,16 +83,17 @@ summary2_by <- function(data, by, vars) {
 }
 
 summary_dbl <- function(x) {
-  d_na <- mean(is.na(x))
-  x <- x[!is.na(x)]
-
-  if (inherits(x, c("Date", "POSIXct", "POSIXlt", "POSIXt"))) {
+  if (inherits(x, c("numeric", "integer"))) {
+    alg <- 7
+  } else if (inherits(x, c("Date", "POSIXct", "POSIXlt", "POSIXt"))) {
     x <- as.numeric(x)
     alg <- 1
   } else {
-    alg <- 7
+    return(summary_template())
   }
 
+  d_na <- mean(is.na(x))
+  x <- x[!is.na(x)]
   mean1 <- mean(x)
   probs <- c(0, 0.25, 0.5, 0.75, 1)
   quantiles <- quantile(x, probs = probs, na.rm = TRUE, type = alg)
@@ -110,6 +111,10 @@ summary_dbl <- function(x) {
 }
 
 summary_lgl <- function(x) {
+  if (!inherits(x, "logical")) {
+    return(summary_template())
+  }
+
   d_na <- mean(is.na(x))
   x <- x[!is.na(x)]
   n_unique <- length(unique(x))
@@ -128,6 +133,10 @@ summary_lgl <- function(x) {
 }
 
 summary_chr <- function(x) {
+  if (!inherits(x, c("character", "factor"))) {
+    return(summary_template())
+  }
+
   d_na <- mean(is.na(x))
   x <- x[!is.na(x)]
   n_unique <- length(unique(x))

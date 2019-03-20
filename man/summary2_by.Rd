@@ -2,7 +2,7 @@
 % Please edit documentation in R/summary.R
 \name{summary2_by}
 \alias{summary2_by}
-\title{Alternative to \code{base::summary()} for data frames, by groups}
+\title{Alternative to summary for data frames, by groups}
 \usage{
 summary2_by(data, by, vars)
 }
@@ -17,5 +17,5 @@ summary2_by(data, by, vars)
 A data frame
 }
 \description{
-Alternative to \code{base::summary()} for data frames, by groups
+Alternative to summary for data frames, by groups
 }

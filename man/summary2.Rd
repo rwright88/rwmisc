@@ -2,7 +2,7 @@
 % Please edit documentation in R/summary.R
 \name{summary2}
 \alias{summary2}
-\title{Alternative to \code{base::summary()} for data frames}
+\title{Alternative to summary for data frames}
 \usage{
 summary2(data)
 }
@@ -13,5 +13,5 @@ summary2(data)
 A data frame
 }
 \description{
-Alternative to \code{base::summary()} for data frames
+Alternative to summary for data frames
 }
