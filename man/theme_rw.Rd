@@ -2,7 +2,7 @@
 % Please edit documentation in R/theme.R
 \name{theme_rw}
 \alias{theme_rw}
-\title{A ggplot2 theme similar to \code{ggplot2::theme_bw()}}
+\title{A ggplot2 theme}
 \usage{
 theme_rw(base_size = 12, base_family = "")
 }
@@ -12,5 +12,5 @@ theme_rw(base_size = 12, base_family = "")
 \item{base_family}{Base font family}
 }
 \description{
-A ggplot2 theme similar to \code{ggplot2::theme_bw()}
+A ggplot2 theme
 }
