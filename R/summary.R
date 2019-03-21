@@ -55,29 +55,24 @@ summary2 <- function(data) {
 #' Alternative to summary for data frames, by groups
 #'
 #' @param data A data frame
-#' @param by A length one character vector of a variable in `data` to group by
+#' @param by A character vector of variables in `data` to group by
 #' @param vars Character vector of variables in `data` to keep in summary
 #' @return A data frame
 #' @export
 summary2_by <- function(data, by, vars) {
   nms <- names(data)
-
-  if (!(length(by) == 1 && all(by %in% nms))) {
-    stop("`by` must be a single variable in `data`.", call. = FALSE)
-  }
-  if (!(all(vars %in% nms))) {
-    stop("`vars` must be in `data`", call. = FALSE)
-  }
+  stopifnot(is.data.frame(data), all(by %in% nms), all(vars %in% nms))
 
   data <- data[c(by, vars)]
-  groups <- split(data, data[[by]])
+  groups <- split(data, data[by], drop = TRUE)
 
   out <- lapply(groups, function(x) {
-    out <- summary2(x[vars])
-    out <- cbind(x[1, by, drop = FALSE], out)
+    res <- summary2(x[vars])
+    res <- cbind(x[1, by, drop = FALSE], res)
   })
 
   out <- dplyr::bind_rows(out)
+  out <- out[do.call(order, out[by]), ]
   out
 }
 

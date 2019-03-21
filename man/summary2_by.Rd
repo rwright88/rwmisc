@@ -9,7 +9,7 @@ summary2_by(data, by, vars)
 \arguments{
 \item{data}{A data frame}
 
-\item{by}{A length one character vector of a variable in \code{data} to group by}
+\item{by}{A character vector of variables in \code{data} to group by}
 
 \item{vars}{Character vector of variables in \code{data} to keep in summary}
 }
