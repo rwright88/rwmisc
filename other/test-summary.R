@@ -14,12 +14,12 @@ x <- list(
   "raw" = raw(1),
 
   "fct" = factor(sample(c(letters[1:10], NA), n, replace = TRUE)),
-  "Sys.Date()" = Sys.Date(),
-  "lubridate::today()" = lubridate::today(),
-  "Sys.time()" = Sys.time(),
-  "lubridate::now()" = lubridate::now(),
-  # zoo,
-  # xts,
+  "date" = Sys.Date(),
+  "ldate" = lubridate::today(),
+  "datetime" = Sys.time(),
+  "ldatetime" = lubridate::now(),
+  "zoo" = zoo::zoo(1),
+  # "xts" = xts::as.xts(Sys.time()),
 
   "list" = list(1)
 )

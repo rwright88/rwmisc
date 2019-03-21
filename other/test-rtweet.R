@@ -13,6 +13,7 @@ twt_user_score <- function(user) {
   } else {
     n_batches <- ceiling(n_follows / limit)
     data <- vector("list", length(n_batches))
+
     for (i in seq_along(n_batches)) {
       first <- (i - 1) * limit + 1
       last <- min(first + limit - 1, n_files)

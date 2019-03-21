@@ -69,16 +69,15 @@ summary2_by <- function(data, by, vars) {
     stop("`vars` must be in `data`", call. = FALSE)
   }
 
+  data <- data[c(by, vars)]
   groups <- split(data, data[[by]])
 
-  out <- lapply(groups, function(.x) {
-    summary2(.x[vars])
+  out <- lapply(groups, function(x) {
+    out <- summary2(x[vars])
+    out <- cbind(x[1, by, drop = FALSE], out)
   })
 
   out <- dplyr::bind_rows(out)
-  ord <- c(by, names(out))
-  out[[by]] <- rep(names(groups), each = length(vars))
-  out <- out[, ord]
   out
 }
 
