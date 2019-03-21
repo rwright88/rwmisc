@@ -61,14 +61,17 @@ summary2 <- function(data) {
 #' @export
 summary2_by <- function(data, by, vars) {
   nms <- names(data)
-  stopifnot(is.data.frame(data), all(by %in% nms), all(vars %in% nms))
+  stopifnot(is.data.frame(data))
+  stopifnot(all(by %in% nms))
+  stopifnot(all(vars %in% nms))
 
-  data <- data[c(by, vars)]
+  data <- dplyr::as_tibble(data)
+  data <- data[, c(by, vars)]
   groups <- split(data, data[by], drop = TRUE)
 
   out <- lapply(groups, function(x) {
     res <- summary2(x[vars])
-    res <- cbind(x[1, by, drop = FALSE], res)
+    res <- dplyr::bind_cols(x[1, by], res)
   })
 
   out <- dplyr::bind_rows(out)
