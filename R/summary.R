@@ -71,7 +71,7 @@ summary2_by <- function(data, by, vars) {
 
   out <- lapply(groups, function(x) {
     res <- summary2(x[vars])
-    res <- dplyr::bind_cols(x[1, by], res)
+    res <- dplyr::bind_cols(x[seq_len(nrow(res)), by], res)
   })
 
   out <- dplyr::bind_rows(out)
