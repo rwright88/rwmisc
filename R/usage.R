@@ -34,9 +34,9 @@ pkg_count_calls <- function(dir) {
     })
   }
 
+  out <- dplyr::bind_rows(out)
   ord <- c("file", names(out))
-  data.table::setDT(out)
   out$file <- basename(files)
-  out <- out[, ..ord]
+  out <- out[, ord]
   out
 }
