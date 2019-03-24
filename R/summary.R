@@ -6,72 +6,77 @@
 
 #' Alternative to summary for data frames
 #'
-#' @param data A data frame
-#' @return A data frame
+#' @param data Data frame
+#' @param probs Numeric vector of probabilities
+#' @return Data frame
 #' @export
-summary2 <- function(data) {
+summary2 <- function(data, probs = seq(0, 1, 0.25)) {
   stopifnot(is.data.frame(data))
-
   if (ncol(data) < 1) {
     return("`data` has 0 columns")
   }
 
   types <- vapply(data, FUN.VALUE = character(1), FUN = typeof)
-  n <- nrow(data)
 
   out <- lapply(data, function(vals) {
-    type <- typeof(vals)
-
     if (all(is.na(vals))) {
-      out <- summary_template()
-      out$d_na <- 1
-      return(out)
+      return(list(d_na = 1))
     }
 
+    type <- typeof(vals)
     if (inherits(vals, "factor")) {
       type <- "character"
     }
 
     if (type %in% c("double", "integer")) {
-      summary_dbl(vals)
+      out <- summary_dbl(vals, probs)
     } else if (type == "logical") {
-      summary_lgl(vals)
+      out <- summary_lgl(vals)
     } else if (type == "character") {
-      summary_chr(vals)
+      out <- summary_chr(vals)
     } else {
-      summary_template()
+      out <- list(d_na = NA)
     }
+
+    out
   })
 
   out <- dplyr::bind_rows(out)
+  ord <- c("name", "type", "n", names(out))
   out$name <- names(data)
   out$type <- shorten_type(types)
-  out$n <- n
-  ord <- c("name", "type", "n", "d_na", "n_unique", "mean", "p0", "p25", "p50", "p75", "p100")
+  out$n <- nrow(data)
   out <- out[, ord]
   out
 }
 
 #' Alternative to summary for data frames, by groups
 #'
-#' @param data A data frame
-#' @param by A character vector of variables in `data` to group by
+#' @param data Data frame
+#' @param by Character vector of variables in `data` to group by
 #' @param vars Character vector of variables in `data` to keep in summary
-#' @return A data frame
+#' @param probs Numeric vector of probabilities
+#' @return Data frame
 #' @export
-summary2_by <- function(data, by, vars) {
-  nms <- names(data)
+summary2_by <- function(data, by, vars, probs = seq(0, 1, 0.25)) {
   stopifnot(is.data.frame(data))
-  stopifnot(all(by %in% nms))
-  stopifnot(all(vars %in% nms))
+  nms <- names(data)
+  if (!all(by %in% nms)) {
+    stop("`by` must be in `data`.", call. = FALSE)
+  }
+  if (!all(vars %in% nms)) {
+    stop("`vars` must be in `data`.", call. = FALSE)
+  }
 
   data <- dplyr::as_tibble(data)
   data <- data[, c(by, vars)]
   groups <- split(data, data[by], drop = TRUE)
 
-  out <- lapply(groups, function(x) {
-    res <- summary2(x[vars])
-    res <- dplyr::bind_cols(x[seq_len(nrow(res)), by], res)
+  out <- lapply(groups, function(.x) {
+    res <- summary2(.x[vars], probs)
+    rows <- seq_len(nrow(res))
+    by_cols <- .x[rows, by]
+    dplyr::bind_cols(by_cols, res)
   })
 
   out <- dplyr::bind_rows(out)
@@ -79,37 +84,32 @@ summary2_by <- function(data, by, vars) {
   out
 }
 
-summary_dbl <- function(x) {
+summary_dbl <- function(x, probs = seq(0, 1, 0.25)) {
   if (inherits(x, c("numeric", "integer"))) {
     alg <- 7
   } else if (inherits(x, c("Date", "POSIXct", "POSIXlt", "POSIXt"))) {
     x <- as.numeric(x)
     alg <- 1
   } else {
-    return(summary_template())
+    return(list(d_na = NA))
   }
 
   d_na <- mean(is.na(x))
   x <- x[!is.na(x)]
   mean1 <- mean(x)
-  probs <- c(0, 0.25, 0.5, 0.75, 1)
-  quantiles <- quantile(x, probs = probs, na.rm = TRUE, type = alg)
+  probs <- unique(probs)
+  quantiles <- quantile(x, probs = probs, na.rm = TRUE, names = FALSE, type = alg)
+  quantiles <- setNames(quantiles, paste0("p", probs * 100))
 
-  list(
-    d_na = d_na,
-    n_unique = NA,
-    mean = mean1,
-    p0 = quantiles[1],
-    p25 = quantiles[2],
-    p50 = quantiles[3],
-    p75 = quantiles[4],
-    p100 = quantiles[5]
+  c(
+    list(d_na = d_na, mean = mean1),
+    as.list(quantiles)
   )
 }
 
 summary_lgl <- function(x) {
   if (!inherits(x, "logical")) {
-    return(summary_template())
+    return(list(d_na = NA))
   }
 
   d_na <- mean(is.na(x))
@@ -120,18 +120,13 @@ summary_lgl <- function(x) {
   list(
     d_na = d_na,
     n_unique = n_unique,
-    mean = mean1,
-    p0 = NA,
-    p25 = NA,
-    p50 = NA,
-    p75 = NA,
-    p100 = NA
+    mean = mean1
   )
 }
 
 summary_chr <- function(x) {
   if (!inherits(x, c("character", "factor"))) {
-    return(summary_template())
+    return(list(d_na = NA))
   }
 
   d_na <- mean(is.na(x))
@@ -140,26 +135,7 @@ summary_chr <- function(x) {
 
   list(
     d_na = d_na,
-    n_unique = n_unique,
-    mean = NA,
-    p0 = NA,
-    p25 = NA,
-    p50 = NA,
-    p75 = NA,
-    p100 = NA
-  )
-}
-
-summary_template <- function() {
-  list(
-    d_na = NA,
-    n_unique = NA,
-    mean = NA,
-    p0 = NA,
-    p25 = NA,
-    p50 = NA,
-    p75 = NA,
-    p100 = NA
+    n_unique = n_unique
   )
 }
 
