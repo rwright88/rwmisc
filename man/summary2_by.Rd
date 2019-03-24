@@ -4,17 +4,19 @@
 \alias{summary2_by}
 \title{Alternative to summary for data frames, by groups}
 \usage{
-summary2_by(data, by, vars)
+summary2_by(data, by, vars, probs = seq(0, 1, 0.25))
 }
 \arguments{
-\item{data}{A data frame}
+\item{data}{Data frame}
 
-\item{by}{A length one character vector of a variable in \code{data} to group by}
+\item{by}{Character vector of variables in \code{data} to group by}
 
 \item{vars}{Character vector of variables in \code{data} to keep in summary}
+
+\item{probs}{Numeric vector of probabilities}
 }
 \value{
-A data frame
+Data frame
 }
 \description{
 Alternative to summary for data frames, by groups

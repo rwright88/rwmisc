@@ -6,7 +6,7 @@ library(rwmisc)
 library(microbenchmark)
 
 n_rows <- 10^(3:6)
-n_cols <- c(4, 20, 100)
+n_cols <- 10^(1:2)
 
 # funs --------------------------------------------------------------------
 
@@ -41,7 +41,7 @@ bench_funs <- function(f_base, f_skimr, f_rwmisc, n_rows, n_cols) {
 
   res <- microbenchmark(
     f_base(data),
-    f_skimr(data),
+    # f_skimr(data),
     f_rwmisc(data),
     times = 10
   )

@@ -1,4 +1,0 @@
-ideas:
-
-benchmark funs
-fix files with awk or similar, other file operations
