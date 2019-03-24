@@ -18,7 +18,7 @@ x <- list(
   "ldate" = lubridate::today(),
   "datetime" = Sys.time(),
   "ldatetime" = lubridate::now(),
-  "zoo" = zoo::zoo(1),
+  # "zoo" = zoo::zoo(1),
   # "xts" = xts::as.xts(Sys.time()),
 
   "list" = list(1)

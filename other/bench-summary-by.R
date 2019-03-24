@@ -33,12 +33,12 @@ f_dplyr <- function(data) {
 bench::mark(iterations = 5, check = FALSE,
   summary(dat),
   summary2(dat),
-  summary2_by(dat, c("c1", "c2", "c3"), "d1"),
+  summary2_by(dat, by = c("c1", "c2", "c3"), vars = "d1"),
   f_dplyr(dat)
 )
 
 # test2 -------------------------------------------------------------------
 
 profvis(
-  summary2_by(dat, c("c1", "c2", "c3", "c4"), c("d1", "d2"))
+  summary2_by(dat, by = c("c1", "c2", "c3", "c4"), vars = c("d1", "d2"))
 )

@@ -1,6 +1,7 @@
 # TODO
 # arg checking
 # fin_amort_rate() is unfinished
+# https://github.com/numpy/numpy/blob/master/numpy/lib/financial.py
 
 #' Calculate payment of amortization
 #'
