@@ -9,8 +9,11 @@ knitr::opts_chunk$set(
   collapse = FALSE,
   comment = "#>",
   fig.path = "man/figures/README-",
-  out.width = "100%"
+  out.width = "100%",
+  message = FALSE
 )
+
+options(width = 120)
 ```
 
 # rwmisc
@@ -25,4 +28,10 @@ devtools::install_github("rwright88/rwmisc")
 
 ## Examples
 
-TODO
+An alternative to `base::summary()` for data frames:
+
+```{r}
+library(rwmisc)
+
+summary2(airquality)
+```
