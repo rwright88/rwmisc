@@ -10,7 +10,7 @@
 #' @param type continuous or discrete
 #' @param probs Numeric vector of probabilities
 #' @param w Weight vector
-#' @return
+#' @return List of confidence intervals
 #' @export
 boot_ci <- function(x, times, type = c("continuous", "discrete"), probs = c(0.1, 0.5, 0.9), w = 1) {
   stopifnot(is.numeric(times), length(times) == 1)
@@ -39,7 +39,7 @@ boot_ci <- function(x, times, type = c("continuous", "discrete"), probs = c(0.1,
   if (type == "continuous") {
     means <- colMeans(xs)
     out <- quantile(means, probs = probs, names = FALSE)
-    out <- setNames(out, paste0("p", probs * 100))
+    out <- list(mean = setNames(out, paste0("p", probs * 100)))
   } else if (type == "discrete") {
     vals <- sort(unique(x))
     out <- lapply(vals, function(val) {

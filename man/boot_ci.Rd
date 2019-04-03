@@ -18,6 +18,9 @@ boot_ci(x, times, type = c("continuous", "discrete"), probs = c(0.1,
 
 \item{w}{Weight vector}
 }
+\value{
+List of confidence intervals
+}
 \description{
 Calculate empirical bootstrap confidence intervals
 }
