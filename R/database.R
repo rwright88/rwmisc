@@ -12,6 +12,10 @@
 #' @param batch_size Number of data files to write to database table per batch
 #' @export
 db_write_files <- function(files, file_db, table_name, batch_size = 1) {
+  if (!(is_installed("data.table") & is_installed("DBI") & is_installed("RSQLite"))) {
+    stop("`db_write_files` requireds data.table, DBI, and RSQLite", call. = FALSE)
+  }
+
   n_files <- length(files)
   if (length(files) < 1) {
     stop("Length of `files` must be at least 1.", call. = FALSE)
@@ -54,7 +58,7 @@ db_write_files <- function(files, file_db, table_name, batch_size = 1) {
 
     data <- lapply(files_batch, function(.x) {
       data <- data.table::fread(.x, header = TRUE)
-      data <- data[, ..var_order]
+      data.table::setcolorder(data, neworder = var_order)
       data
     })
 

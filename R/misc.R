@@ -13,3 +13,8 @@ identical_all <- function(x, ...) {
     identical(.x, x[[1]], ...)
   }))
 }
+
+# from rlang::is_installed()
+is_installed <- function(pkg) {
+  identical(requireNamespace(pkg, quietly = TRUE), TRUE)
+}
