@@ -5,56 +5,15 @@ library(microbenchmark)
 library(rwmisc)
 
 size  <- 10^(1:3)
-times <- 10^(1:5)
+times <- 10^(3:5)
 
 # funs --------------------------------------------------------------------
 
-# (hopefully) same output as boot_ci(), except can't use weights?
-boot_ci_mat <- function(x, times, type = c("continuous", "discrete"), probs = c(0.1, 0.5, 0.9), w = 1) {
-  stopifnot(is.numeric(times), length(times) == 1)
-  stopifnot(is.numeric(probs), all(probs >= 0 & probs <= 1))
-  type <- match.arg(type)
-
-  x_len <- length(x)
-  w_len <- length(w)
-
-  if (w_len != 1 & x_len != w_len) {
-    stop("`x` and `w` must have the same length.", call. = FALSE)
-  }
-  if (w_len == 1) {
-    w <- rep(1, x_len)
-  } else {
-    w <- w / mean(w)
-  }
-
-  # ~~~~~ start diffs
-  size <- x_len * times
-  xs <- matrix(sample(x, size = size, replace = TRUE), nrow = x_len, ncol = times)
-  # ~~~~~ end diffs
-
-  if (type == "continuous") {
-    means <- colMeans(xs)
-    out <- quantile(means, probs = probs, names = FALSE)
-    out <- list(mean = setNames(out, paste0("p", probs * 100)))
-  } else if (type == "discrete") {
-    vals <- sort(unique(x))
-    out <- lapply(vals, function(val) {
-      means <- colMeans(xs == val)
-      res <- quantile(means, probs = probs, names = FALSE)
-      setNames(res, paste0("p", probs * 100))
-    })
-    out <- setNames(out, vals)
-  }
-
-  out
-}
-
-bench_funs <- function(f_vapply, f_mat, size, times) {
+bench_funs <- function(boot_ci, size, times) {
   x <- runif(size)
 
   res <- microbenchmark::microbenchmark(
-    f_vapply(x, times),
-    f_mat(x, times),
+    boot_ci(x, times),
     times = 10
   )
 
@@ -64,13 +23,12 @@ bench_funs <- function(f_vapply, f_mat, size, times) {
   res
 }
 
-run_benches <- function(f_vapply, f_mat, size, times) {
+run_benches <- function(boot_ci, size, times) {
   params <- tidyr::crossing(size, times)
 
   res <- purrr::pmap(params, function(size, times) {
     bench_funs(
-      f_vapply = f_vapply,
-      f_mat = f_mat,
+      boot_ci = boot_ci,
       size = size,
       times = times
     )
@@ -102,8 +60,7 @@ plot_medians <- function(data, x, facet) {
 # run ---------------------------------------------------------------------
 
 res <- run_benches(
-  f_vapply = boot_ci,
-  f_mat = boot_ci_mat,
+  boot_ci = boot_ci,
   size = size,
   times = times
 )

@@ -4,22 +4,21 @@
 \alias{boot_ci}
 \title{Calculate empirical bootstrap confidence intervals}
 \usage{
-boot_ci(x, times, type = c("continuous", "discrete"), probs = c(0.1,
-  0.5, 0.9), w = 1)
+boot_ci(x, times, fun = "mean", probs = c(0.1, 0.5, 0.9), w = 1)
 }
 \arguments{
 \item{x}{Numeric vector}
 
-\item{times}{Number of samples}
+\item{times}{Number of bootstrap samples}
 
-\item{type}{continuous or discrete}
+\item{fun}{Function to use}
 
 \item{probs}{Numeric vector of probabilities}
 
 \item{w}{Weight vector}
 }
 \value{
-List of confidence intervals
+Numeric vector of confidence intervals
 }
 \description{
 Calculate empirical bootstrap confidence intervals
