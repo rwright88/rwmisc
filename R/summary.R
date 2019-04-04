@@ -12,6 +12,7 @@
 #' @export
 summary2 <- function(data, probs = seq(0, 1, 0.25)) {
   stopifnot(is.data.frame(data))
+  stopifnot(is.numeric(probs), all(probs >= 0 & probs <= 1))
   if (ncol(data) < 1) {
     return("`data` has 0 columns")
   }
@@ -146,4 +147,19 @@ shorten_type <- function(x) {
   x[x == "character"] <- "chr"
   x[x == "complex"]   <- "cpl"
   x
+}
+
+#' Print summary2
+#'
+#' @param x Data frame
+#' @param digits Minimum number of significant digits to use
+#' @param n_rows Maximum number of rows to print
+#' @param ... Other arguments passed on to print
+#' @export
+print.summary2 <- function(x, digits = 4, n_rows = 10, ...) {
+  stopifnot(is.numeric(digits), length(digits) == 1)
+  stopifnot(is.numeric(n_rows), length(n_rows) == 1)
+  n_cells <- round(ncol(x) * n_rows)
+  print.data.frame(x, digits = digits, max = n_cells)
+  invisible(x)
 }

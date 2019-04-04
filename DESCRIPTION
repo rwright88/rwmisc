@@ -9,13 +9,13 @@ Authors@R:
 Description: Miscellaneous functions.
 License: MIT + file LICENSE
 Imports: 
-    data.table,
-    DBI,
     dplyr,
     ggplot2,
-    RSQLite,
     stringr
 Suggests: 
+    data.table,
+    DBI,
+    RSQLite,
     testthat
 Encoding: UTF-8
 LazyData: true

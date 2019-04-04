@@ -1,6 +1,6 @@
 # TODO
 # arg checking
-# fin_amort_rate() is unfinished
+# fin_rate() is unfinished
 # https://github.com/numpy/numpy/blob/master/numpy/lib/financial.py
 
 #' Calculate payment of amortization
@@ -10,7 +10,7 @@
 #' @param n Number of periods
 #' @return Numeric vector of payment per period
 #' @export
-fin_amort_pay <- function(principal, rate, n) {
+fin_pay <- function(principal, rate, n) {
   if (rate < 0) {
     stop("`rate` must be greater than or equal to 0.", call. = FALSE)
   } else if (rate == 0) {
@@ -32,7 +32,7 @@ fin_amort_pay <- function(principal, rate, n) {
 #' @param tol Tolerance, single value
 #' @return Single value numeric vector of interest rate per period
 #' @export
-fin_amort_rate <- function(principal, payment, n, tol = 1e-5) {
+fin_rate <- function(principal, payment, n, tol = 1e-5) {
   stopifnot(
     length(principal) == 1,
     length(payment) == 1,
@@ -47,7 +47,7 @@ fin_amort_rate <- function(principal, payment, n, tol = 1e-5) {
   rate_upper <- (payment * n) / principal - 1
   rate_guess <- min(0.05, rate_upper / 2)
 
-  pay_calc <- fin_amort_pay(principal, rate_guess, n)
+  pay_calc <- fin_pay(principal, rate_guess, n)
   pay_diff <- (pay_calc - payment) / payment
 
   while (abs(pay_diff) > tol) {
@@ -58,7 +58,7 @@ fin_amort_rate <- function(principal, payment, n, tol = 1e-5) {
       rate_upper <- rate_guess
       rate_guess <- (rate_guess + rate_lower) / 2
     }
-    pay_calc <- fin_amort_pay(principal, rate_guess, n)
+    pay_calc <- fin_pay(principal, rate_guess, n)
     pay_diff <- (pay_calc - payment) / payment
   }
 
