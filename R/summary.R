@@ -48,7 +48,7 @@ summary2 <- function(data, probs = seq(0, 1, 0.25)) {
   out$type <- shorten_type(types)
   out$n <- nrow(data)
   out <- out[, ord]
-  structure(out, class = c("summary2", "data.frame"))
+  out
 }
 
 #' Alternative to summary for data frames, by groups
@@ -82,7 +82,7 @@ summary2_by <- function(data, by, vars, probs = seq(0, 1, 0.25)) {
 
   out <- dplyr::bind_rows(out)
   out <- out[do.call(order, out[by]), ]
-  structure(out, class = c("summary2", "data.frame"))
+  out
 }
 
 summary_dbl <- function(x, probs = seq(0, 1, 0.25)) {
@@ -147,19 +147,4 @@ shorten_type <- function(x) {
   x[x == "character"] <- "chr"
   x[x == "complex"]   <- "cpl"
   x
-}
-
-#' Print summary2
-#'
-#' @param x Data frame
-#' @param digits Minimum number of significant digits to use
-#' @param n_rows Maximum number of rows to print
-#' @param ... Other arguments passed on to print
-#' @export
-print.summary2 <- function(x, digits = 4, n_rows = 10, ...) {
-  stopifnot(is.numeric(digits), length(digits) == 1)
-  stopifnot(is.numeric(n_rows), length(n_rows) == 1)
-  n_cells <- round(ncol(x) * n_rows)
-  print.data.frame(x, digits = digits, max = n_cells)
-  invisible(x)
 }
