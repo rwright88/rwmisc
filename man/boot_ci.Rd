@@ -4,7 +4,7 @@
 \alias{boot_ci}
 \title{Calculate empirical bootstrap confidence intervals}
 \usage{
-boot_ci(x, times, fun = "mean", probs = c(0.1, 0.5, 0.9), w = 1)
+boot_ci(x, times, fun = "mean", probs = c(0.1, 0.5, 0.9), w = NULL)
 }
 \arguments{
 \item{x}{Numeric vector}

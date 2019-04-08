@@ -4,8 +4,8 @@ library(tidyverse)
 library(microbenchmark)
 library(rwmisc)
 
-size  <- 10^(1:3)
-times <- 10^(4:5)
+size <- round(round(10^seq(1, 3, 0.2)))
+times <- 1e4
 
 # funs --------------------------------------------------------------------
 
@@ -15,7 +15,7 @@ bench_funs <- function(boot_ci, boot_ci2, size, times) {
   res <- microbenchmark::microbenchmark(
     boot_ci(x, times),
     boot_ci2(x, times),
-    times = 30
+    times = 10
   )
 
   res$size <- size
