@@ -7,6 +7,10 @@
 #' @param base_family Base font family
 #' @export
 theme_rw <- function(base_size = 12, base_family = "") {
+  if (!(is_installed("ggplot2"))) {
+    stop("`theme_rw` requireds ggplot2", call. = FALSE)
+  }
+
   out <- ggplot2::theme_bw(base_size = base_size, base_family = base_family)
   out
 }

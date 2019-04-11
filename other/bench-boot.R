@@ -9,12 +9,11 @@ times <- 1e4
 
 # funs --------------------------------------------------------------------
 
-bench_funs <- function(boot_ci, boot_ci2, size, times) {
+bench_funs <- function(boot_ci, size, times) {
   x <- runif(size)
 
   res <- microbenchmark::microbenchmark(
     boot_ci(x, times),
-    boot_ci2(x, times),
     times = 10
   )
 
@@ -24,13 +23,12 @@ bench_funs <- function(boot_ci, boot_ci2, size, times) {
   res
 }
 
-run_benches <- function(boot_ci, boot_ci2, size, times) {
+run_benches <- function(boot_ci, size, times) {
   params <- tidyr::crossing(size, times)
 
   res <- purrr::pmap(params, function(size, times) {
     bench_funs(
       boot_ci = boot_ci,
-      boot_ci2 = boot_ci2,
       size = size,
       times = times
     )
@@ -78,7 +76,6 @@ plot_times <- function(data, x, facet) {
 
 res <- run_benches(
   boot_ci = boot_ci,
-  boot_ci2 = boot_ci2,
   size = size,
   times = times
 )
