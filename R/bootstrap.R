@@ -14,7 +14,7 @@ boot_ci <- function(x, times, fun = "mean", probs = c(0.1, 0.5, 0.9), w = NULL) 
 
   x_len <- length(x)
   size <- x_len * times
-  size_max <- 1e8
+  size_max <- 1e7
   fun_mat <- get_matrix_fun(fun, size, size_max)
   fun <- match.fun(fun_mat$fun)
 

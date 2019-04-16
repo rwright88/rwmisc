@@ -1,7 +1,7 @@
 # benchmark boot_ci()
 
 library(tidyverse)
-library(microbenchmark)
+library(bench)
 library(rwmisc)
 
 size <- round(round(10^seq(1, 3, 0.2)))
@@ -12,15 +12,17 @@ times <- 1e4
 bench_funs <- function(boot_ci, size, times) {
   x <- runif(size)
 
-  res <- microbenchmark::microbenchmark(
+  res <- bench::mark(
     boot_ci(x, times),
-    times = 10
+    iterations = 30,
+    check = FALSE
   )
 
-  res$size <- size
-  res$times <- times
-  res$time <- res$time / 1e9
-  res
+  out <- res[, c("expression", "median", "n_itr")]
+  out$median <- as.numeric(res$median)
+  out$size <- size
+  out$times <- times
+  out
 }
 
 run_benches <- function(boot_ci, size, times) {
@@ -43,10 +45,7 @@ plot_medians <- function(data, x, facet) {
   facet <- sym(facet)
 
   data %>%
-    group_by(!!x, !!facet, expr) %>%
-    summarise(time_p50 = median(time)) %>%
-    ungroup() %>%
-    ggplot(aes(!!x, time_p50, color = expr)) +
+    ggplot(aes(!!x, median, color = expression)) +
     geom_point(size = 2) +
     geom_line(size = 1) +
     facet_wrap(facet, nrow = 1) +
@@ -54,22 +53,7 @@ plot_medians <- function(data, x, facet) {
     scale_y_log10(breaks = 10 ^ (-10:10), minor_breaks = NULL) +
     scale_color_brewer(type = "qual", palette = "Set1") +
     annotation_logticks() +
-    rwmisc::theme_rw()
-}
-
-plot_times <- function(data, x, facet) {
-  x <- sym(x)
-  facet <- sym(facet)
-
-  data %>%
-    mutate(size = factor(size)) %>%
-    ggplot(aes(!!x, time, color = expr)) +
-    geom_boxplot(outlier.alpha = 0.5) +
-    facet_wrap(facet, nrow = 1) +
-    scale_y_log10(breaks = 10 ^ (-10:10), minor_breaks = NULL) +
-    scale_color_brewer(type = "qual", palette = "Set1") +
-    annotation_logticks() +
-    rwmisc::theme_rw()
+    theme_rw()
 }
 
 # run ---------------------------------------------------------------------
@@ -81,4 +65,3 @@ res <- run_benches(
 )
 
 plot_medians(res, x = "size", facet = "times")
-plot_times(res, x = "size", facet = "times")
