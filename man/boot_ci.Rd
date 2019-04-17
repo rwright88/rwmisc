@@ -11,11 +11,11 @@ boot_ci(x, times, fun = "mean", probs = c(0.1, 0.5, 0.9), w = NULL)
 
 \item{times}{Number of bootstrap samples}
 
-\item{fun}{Function to use}
+\item{fun}{Character vector of function to use, default is mean}
 
 \item{probs}{Numeric vector of probabilities}
 
-\item{w}{Weight vector}
+\item{w}{Numeric weight vector}
 }
 \value{
 Numeric vector of confidence intervals

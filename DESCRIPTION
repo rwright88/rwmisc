@@ -10,11 +10,11 @@ Description: Miscellaneous functions.
 License: MIT + file LICENSE
 Imports: 
     dplyr,
-    ggplot2,
     stringr
 Suggests: 
     data.table,
     DBI,
+    ggplot2,
     RSQLite,
     testthat
 Encoding: UTF-8
