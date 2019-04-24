@@ -20,7 +20,7 @@ db_write_files <- function(files, file_db, table_name, batch_size = 1) {
   if (length(files) < 1) {
     stop("Length of `files` must be at least 1.", call. = FALSE)
   }
-  if (!(batch_size %in% seq_len(n_files))) {
+  if (!(is.numeric(batch_size) && batch_size >= 1 && batch_size <= n_files)) {
     stop("`batch_size` must be between 1 and the number of `files`.")
   }
 
@@ -33,10 +33,7 @@ db_write_files <- function(files, file_db, table_name, batch_size = 1) {
     headers <- lapply(files, function(.x) {
       sort(names(data.table::fread(.x, nrows = 0, header = TRUE)))
     })
-
-    all_identical <- identical_all(headers)
-
-    if (all_identical != TRUE) {
+    if (identical_all(headers) != TRUE) {
       stop("Files have inconsistent headers.", call. = FALSE)
     }
   }
@@ -48,6 +45,7 @@ db_write_files <- function(files, file_db, table_name, batch_size = 1) {
   con <- DBI::dbConnect(RSQLite::SQLite(), file_db)
   on.exit(DBI::dbDisconnect(con))
 
+  batch_size <- round(batch_size)
   n_batches <- ceiling(n_files / batch_size)
   var_order <- names(data.table::fread(files[1], nrows = 0, header = TRUE))
 
