@@ -58,11 +58,9 @@ get_matrix_fun <- function(fun, size, size_max) {
     return(list(fun = fun, is_matrix_fun = FALSE))
   }
 
-  if (fun == "mean") {
-    out <- list(fun = "colMeans", is_matrix_fun = TRUE)
-  } else {
-    out <- list(fun = fun, is_matrix_fun = FALSE)
-  }
-
-  out
+  switch(fun,
+    mean = list(fun = "colMeans", is_matrix_fun = TRUE),
+    sum = list(fun = "colSums", is_matrix_fun = TRUE),
+    list(fun = fun, is_matrix_fun = FALSE)
+  )
 }
