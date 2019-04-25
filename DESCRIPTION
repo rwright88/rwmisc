@@ -16,6 +16,7 @@ Suggests:
     DBI,
     ggplot2,
     RSQLite,
+    sf,
     testthat
 Encoding: UTF-8
 LazyData: true
