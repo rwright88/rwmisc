@@ -15,6 +15,7 @@ Suggests:
     data.table,
     DBI,
     ggplot2,
+    leaflet,
     RSQLite,
     sf,
     testthat

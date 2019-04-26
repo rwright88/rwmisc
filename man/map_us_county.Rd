@@ -2,7 +2,7 @@
 % Please edit documentation in R/geo.R
 \name{map_us_county}
 \alias{map_us_county}
-\title{Create US county choropleth map}
+\title{Create US county map}
 \usage{
 map_us_county(data, fill, type = c("polygons", "centroids"),
   size = NULL, state = NULL)
@@ -21,5 +21,5 @@ determine circle size}
 \item{state}{Character vector of state FIPS codes to include in map}
 }
 \description{
-Create US county choropleth map
+Create US county map
 }
