@@ -51,41 +51,16 @@ metro <- get_metro(county)
 county <- calc_changes(county, bys = "county", first = year_first, last = year_last)
 metro <- calc_changes(metro, bys = c("cbsa_code", "cbsa_name"), first = year_first, last = year_last)
 
-# county2 <- county %>%
-#   rename(county_fips = county) %>%
-#   mutate(change_aa = change_aa * 100) %>%
-#   mutate(change_aa = case_when(
-#     change_aa < -2.5 ~ -2.5,
-#     change_aa > 2.5 ~ 2.5,
-#     TRUE ~ change_aa
-#   ))
-#
-# states <- us_state_poly$state_fips
-# states <- states[!(states %in% c("02", "15", "72"))]
-#
-# county2 %>%
-#   rwmisc::map_us_county(fill = "change_aa", type = "polygons", state = states) +
-#   scale_fill_gradientn(colors = RColorBrewer::brewer.pal(11, "RdBu")) +
-#   rwmisc::theme_rw()
-#
-# county2 %>%
-#   rwmisc::map_us_county(fill = "change_aa", type = "centroids", size = "pop", state = states) +
-#   scale_fill_gradientn(colors = RColorBrewer::brewer.pal(11, "RdBu")) +
-#   scale_size_continuous(range = c(0.2, 20)) +
-#   rwmisc::theme_rw()
-
-metro2 <- metro %>%
+metro %>%
   mutate(change_aa = change_aa * 100) %>%
   mutate(change_aa = case_when(
     change_aa < -2.5 ~ -2.5,
     change_aa > 2.5 ~ 2.5,
     TRUE ~ change_aa
-  ))
-
-metro2 %>%
+  )) %>%
   rwmisc::map_us_metro(fill = "change_aa", size = "pop") +
-  scale_fill_gradientn(colors = RColorBrewer::brewer.pal(11, "RdBu")) +
-  scale_size_continuous(range = c(0.2, 20)) +
+  scale_fill_gradientn(colors = RColorBrewer::brewer.pal(9, "RdPu")) +
+  scale_size_continuous(range = c(0.5, 20), guide = FALSE) +
   rwmisc::theme_rw()
 
 ggsave("~/map.png", dpi = 300, width = 14, height = 8)

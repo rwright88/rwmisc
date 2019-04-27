@@ -42,6 +42,7 @@ map_us_metro <- function(data, fill, size = NULL) {
   p <- p + ggplot2::geom_sf(ggplot2::aes(fill = !!fill_, size = !!size_),
     shape = 21,
     stroke = 0.1,
+    color = "#ffffff",
     show.legend = "point"
   )
   p <- p + ggplot2::geom_sf(data = us_state_poly, fill = NA, size = 0.3)
