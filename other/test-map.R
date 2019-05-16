@@ -63,8 +63,8 @@ county %>%
     TRUE ~ change_aa
   )) %>%
   rwmisc::map_us_county(fill = "change_aa", type = "centroids", size = "pop", state = states) +
-  scale_fill_viridis_c(option = "magma") +
-  scale_size_continuous(range = c(1, 15), guide = FALSE) +
+  scale_fill_gradientn(colours = RColorBrewer::brewer.pal(9, "RdBu")) +
+  scale_size_continuous(range = c(0.5, 15), guide = FALSE) +
   rwmisc::theme_rw()
 
 ggsave("~/map-county.png", dpi = 300, width = 14, height = 8)
@@ -73,12 +73,12 @@ metro %>%
   mutate(change_aa = change_aa * 100) %>%
   mutate(change_aa = case_when(
     change_aa < -2 ~ -2,
-    change_aa > 3 ~ 3,
+    change_aa > 2 ~ 2,
     TRUE ~ change_aa
   )) %>%
   rwmisc::map_us_metro(fill = "change_aa", size = "pop") +
-  scale_fill_viridis_c(option = "magma") +
-  scale_size_continuous(range = c(1, 20), guide = FALSE) +
+  scale_fill_gradientn(colours = RColorBrewer::brewer.pal(9, "RdBu")) +
+  scale_size_continuous(range = c(0.5, 20), guide = FALSE) +
   rwmisc::theme_rw()
 
 ggsave("~/map-metro.png", dpi = 300, width = 14, height = 8)
