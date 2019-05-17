@@ -1,66 +1,52 @@
 # TODO
-# arg checking
-# fin_rate() is unfinished
 # https://github.com/numpy/numpy/blob/master/numpy/lib/financial.py
 
-#' Calculate payment of amortization
+#' Calculate payment per period
 #'
-#' @param principal Principal starting amount
-#' @param rate Interest rate per period
-#' @param n Number of periods
-#' @return Numeric vector of payment per period
+#' @param pv Present value
+#' @param rate Rate of interest per period
+#' @param n Number of compounding periods
+#' @return Payment per period
 #' @export
-fin_pay <- function(principal, rate, n) {
-  if (rate < 0) {
-    stop("`rate` must be greater than or equal to 0.", call. = FALSE)
-  } else if (rate == 0) {
-    return(principal / n)
-  }
-  if (n < 1) {
-    stop("`n` must be greater than or equal to 1.", call. = FALSE)
-  }
-
-  pay <- principal * (rate * (1 + rate) ^ n) / ((1 + rate) ^ n - 1)
+fin_pay <- function(pv, rate, n) {
+  temp <- (1 + rate) ^ n
+  len <- max(length(pv), length(rate), length(n))
+  pay <- vector("numeric", len)
+  pay[rate == 0] <- -pv / n
+  pay[rate != 0] <- -pv * (rate * temp) / (temp - 1)
   pay
 }
 
-#' Calculate estimated interest rate of amortization
+#' Calculate rate of interest per period
 #'
-#' @param principal Principal starting amount, single value
-#' @param payment Payment per period, single value
-#' @param n Number of periods, single value
-#' @param tol Tolerance, single value
-#' @return Single value numeric vector of interest rate per period
+#' @param pv Present value
+#' @param pay Payment per period
+#' @param n Number of periods
+#' @param guess Starting guess for solving rate of interest, default 0.1
+#' @param tol Tolerance for solution
+#' @param max_iter Maximum iterations to find solution
+#' @return Rate of interest per period
 #' @export
-fin_rate <- function(principal, payment, n, tol = 1e-5) {
-  stopifnot(
-    length(principal) == 1,
-    length(payment) == 1,
-    length(n) == 1,
-    length(tol) == 1
-  )
-  if (payment * n < principal) {
-    stop("`payment` * `n` must be greater than or equal to `principal`.", call. = FALSE)
+fin_rate <- function(pv, pay, n, guess = 0.1, tol = 1e-5, max_iter = 100) {
+  rn <- guess
+  iterator <- 0
+  close <- FALSE
+
+  while (iterator < max_iter && close == FALSE) {
+    rnp1 <- rn - g_div_gp(rn, n, pay, pv)
+    diff <- abs(rnp1 - rn)
+    close <- all(diff < tol)
+    iterator <- iterator + 1
+    rn <- rnp1
   }
 
-  rate_lower <- 0
-  rate_upper <- (payment * n) / principal - 1
-  rate_guess <- min(0.05, rate_upper / 2)
+  rn
+}
 
-  pay_calc <- fin_pay(principal, rate_guess, n)
-  pay_diff <- (pay_calc - payment) / payment
-
-  while (abs(pay_diff) > tol) {
-    if (pay_diff < 0) {
-      rate_lower <- rate_guess
-      rate_guess <- (rate_guess + rate_upper) / 2
-    } else if (pay_diff > 0) {
-      rate_upper <- rate_guess
-      rate_guess <- (rate_guess + rate_lower) / 2
-    }
-    pay_calc <- fin_pay(principal, rate_guess, n)
-    pay_diff <- (pay_calc - payment) / payment
-  }
-
-  rate_guess
+# https://github.com/numpy/numpy/blob/master/numpy/lib/financial.py
+g_div_gp <- function(r, n, p, x) {
+  t1 = (r + 1) ^ n
+  t2 = (r + 1) ^ (n - 1)
+  (t1 * x + p * (t1 - 1) / r) /
+    (n * t2 * x - p * (t1 - 1) / (r ^ 2) + n * p * t2 / r)
 }
