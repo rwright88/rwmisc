@@ -71,6 +71,6 @@ usethis::use_data(
   us_metro_cent,
   us_county_poly,
   us_county_cent,
-  internal = FALSE,
+  internal = TRUE,
   overwrite = TRUE
 )
