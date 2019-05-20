@@ -2,22 +2,26 @@
 % Please edit documentation in R/finance.R
 \name{fin_rate}
 \alias{fin_rate}
-\title{Calculate estimated interest rate of amortization}
+\title{Calculate rate of interest per period}
 \usage{
-fin_rate(principal, payment, n, tol = 1e-05)
+fin_rate(pv, pay, n, guess = 0.1, tol = 1e-05, max_iter = 100)
 }
 \arguments{
-\item{principal}{Principal starting amount, single value}
+\item{pv}{Present value}
 
-\item{payment}{Payment per period, single value}
+\item{pay}{Payment per period}
 
-\item{n}{Number of periods, single value}
+\item{n}{Number of periods}
 
-\item{tol}{Tolerance, single value}
+\item{guess}{Starting guess for solving rate of interest, default 0.1}
+
+\item{tol}{Tolerance for solution}
+
+\item{max_iter}{Maximum iterations to find solution}
 }
 \value{
-Single value numeric vector of interest rate per period
+Rate of interest per period
 }
 \description{
-Calculate estimated interest rate of amortization
+Calculate rate of interest per period
 }

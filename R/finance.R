@@ -1,6 +1,22 @@
 # TODO
 # https://github.com/numpy/numpy/blob/master/numpy/lib/financial.py
 
+#' Calculate present value
+#'
+#' @param pay Payment per period
+#' @param rate Rate of interest per period
+#' @param n Number of compounding periods
+#' @return Present value
+#' @export
+fin_pv <- function(pay, rate, n) {
+  temp <- (1 + rate) ^ n
+  len <- max(length(pay), length(rate), length(n))
+  pv <- vector("numeric", len)
+  pv[rate == 0] <- -pay * n
+  pv[rate != 0] <- -pay * (temp - 1) / (rate * temp)
+  pv
+}
+
 #' Calculate payment per period
 #'
 #' @param pv Present value

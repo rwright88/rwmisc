@@ -3,6 +3,7 @@
 export(boot_ci)
 export(db_write_files)
 export(fin_pay)
+export(fin_pv)
 export(fin_rate)
 export(identical_all)
 export(pkg_count_calls)
