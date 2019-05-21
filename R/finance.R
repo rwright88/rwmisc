@@ -1,4 +1,4 @@
-# TODO
+# TODO: fin_n()
 # https://github.com/numpy/numpy/blob/master/numpy/lib/financial.py
 
 #' Calculate present value
