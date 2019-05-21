@@ -31,7 +31,7 @@ tabulate2 <- function(x) {
     pos <- NULL
   }
 
-  nms <- seq.int(x_min, x_max)
+  nms <- seq.int(min(x_min, 1), max(x_max, -1))
   nms <- c(NA, nms)
 
   out <- c(nas, neg, zeros, pos)
