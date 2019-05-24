@@ -1,4 +1,5 @@
-# TODO: fin_n()
+# TODO: fix index subset when rate is 0 or not
+# TODO: tests
 # https://github.com/numpy/numpy/blob/master/numpy/lib/financial.py
 
 #' Calculate present value
@@ -9,9 +10,9 @@
 #' @return Present value
 #' @export
 fin_pv <- function(pay, rate, n) {
-  temp <- (1 + rate) ^ n
   len <- max(length(pay), length(rate), length(n))
   pv <- vector("numeric", len)
+  temp <- (1 + rate) ^ n
   pv[rate == 0] <- -pay * n
   pv[rate != 0] <- -pay * (temp - 1) / (rate * temp)
   pv
@@ -25,9 +26,9 @@ fin_pv <- function(pay, rate, n) {
 #' @return Payment per period
 #' @export
 fin_pay <- function(pv, rate, n) {
-  temp <- (1 + rate) ^ n
   len <- max(length(pv), length(rate), length(n))
   pay <- vector("numeric", len)
+  temp <- (1 + rate) ^ n
   pay[rate == 0] <- -pv / n
   pay[rate != 0] <- -pv * (rate * temp) / (temp - 1)
   pay
@@ -37,7 +38,7 @@ fin_pay <- function(pv, rate, n) {
 #'
 #' @param pv Present value
 #' @param pay Payment per period
-#' @param n Number of periods
+#' @param n Number of compounding periods
 #' @param guess Starting guess for solving rate of interest, default 0.1
 #' @param tol Tolerance for solution
 #' @param max_iter Maximum iterations to find solution
@@ -65,4 +66,19 @@ g_div_gp <- function(r, n, p, x) {
   t2 = (r + 1) ^ (n - 1)
   (t1 * x + p * (t1 - 1) / r) /
     (n * t2 * x - p * (t1 - 1) / (r ^ 2) + n * p * t2 / r)
+}
+
+#' Calculate number of compounding periods
+#'
+#' @param pv Present value
+#' @param pay Payment per period
+#' @param rate Rate of interest per period
+#' @return Number of compounding periods
+#' @export
+fin_n <- function(pv, pay, rate) {
+  len <- max(length(pv), length(pay), length(rate))
+  n <- vector("numeric", len)
+  n[rate == 0] <- -pv / pay
+  n[rate != 0] <- log(1 - rate * pv / pay) / log(1 + rate)
+  n
 }

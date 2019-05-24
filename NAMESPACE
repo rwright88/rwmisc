@@ -2,6 +2,7 @@
 
 export(boot_ci)
 export(db_write_files)
+export(fin_n)
 export(fin_pay)
 export(fin_pv)
 export(fin_rate)

@@ -11,7 +11,7 @@ fin_rate(pv, pay, n, guess = 0.1, tol = 1e-05, max_iter = 100)
 
 \item{pay}{Payment per period}
 
-\item{n}{Number of periods}
+\item{n}{Number of compounding periods}
 
 \item{guess}{Starting guess for solving rate of interest, default 0.1}
 
