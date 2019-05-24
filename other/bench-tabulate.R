@@ -6,7 +6,7 @@ library(vctrs)
 library(bench)
 
 sizes <- 10^(4:6)
-rates <- 10^(-5:-1)
+rates <- 10^(-5:0)
 
 # funs --------------------------------------------------------------------
 
@@ -32,7 +32,7 @@ run_bench <- function(sizes, rates) {
       vec_count(x),
       table(x),
       check = FALSE,
-      iterations = 10
+      iterations = 30
     )
 
     res <- res[, c("expression", "median", "n_itr")]

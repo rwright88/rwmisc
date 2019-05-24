@@ -10,7 +10,7 @@ tabulate2(x)
 \item{x}{Numeric vector}
 }
 \value{
-Numeric vector of counts of unique values of x
+Data frame of unique values of x and counts of each unique value
 }
 \description{
 Alternative to tabulate
