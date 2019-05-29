@@ -5,25 +5,21 @@ library(rwmisc)
 library(vctrs)
 library(bench)
 
-sizes <- 10^(4:6)
-rates <- 10^(-5:0)
+sizes <- 10^c(5, 6)
+upper <- 10^c(1, 4, 7)
 
 # funs --------------------------------------------------------------------
 
-run_bench <- function(sizes, rates) {
+run_bench <- function(sizes, upper) {
   params <- tidyr::crossing(
     size = sizes,
-    rate = rates
+    upper = upper
   )
-  params <- filter(params, size * rate > 5)
 
   out <- lapply(seq_len(nrow(params)), function(i) {
     size <- params$size[[i]]
-    rate <- params$rate[[i]]
-
-    n_unique <- round(size * rate)
-    vals <- seq(-n_unique / 2, n_unique / 2)
-    x <- sample(vals, size = size, replace = TRUE)
+    upper <- params$upper[[i]]
+    x <- as.integer(round(runif(size, min = -upper, max = upper)))
 
     res <- bench::mark(
       sum(x),
@@ -32,13 +28,13 @@ run_bench <- function(sizes, rates) {
       vec_count(x),
       table(x),
       check = FALSE,
-      iterations = 30
+      iterations = 10
     )
 
     res <- res[, c("expression", "median", "n_itr")]
     res$median <- as.numeric(res$median)
     res$size <- size
-    res$rate <- rate
+    res$upper <- upper
     res
   })
 
@@ -64,6 +60,6 @@ plot_bench <- function(data, x, facet) {
 
 # run ---------------------------------------------------------------------
 
-res <- run_bench(sizes = sizes, rates = rates)
+res <- run_bench(sizes = sizes, upper = upper)
 
-plot_bench(res, x = "rate", facet = "size")
+plot_bench(res, x = "upper", facet = "size")
