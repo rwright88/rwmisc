@@ -1,6 +1,4 @@
-# TODO: fix index subset when rate is 0 or not
-# TODO: tests
-# https://github.com/numpy/numpy/blob/master/numpy/lib/financial.py
+# TODO: add tests
 
 #' Calculate present value
 #'
@@ -10,11 +8,16 @@
 #' @return Present value
 #' @export
 fin_pv <- function(pay, rate, n) {
-  len <- max(length(pay), length(rate), length(n))
-  pv <- vector("numeric", len)
+  len <- length(pay)
+  if (len != length(rate) || len != length(n)) {
+    stop("`pay`, `rate`, and `n` must have the same length", call. = FALSE)
+  }
   temp <- (1 + rate) ^ n
-  pv[rate == 0] <- -pay * n
-  pv[rate != 0] <- -pay * (temp - 1) / (rate * temp)
+  z <- (rate == 0)
+  r <- !z
+  pv <- vector("numeric", len)
+  pv[z] <- -pay[z] * n[z]
+  pv[r] <- -pay[r] * (temp[r] - 1) / (rate[r] * temp[r])
   pv
 }
 
@@ -26,11 +29,16 @@ fin_pv <- function(pay, rate, n) {
 #' @return Payment per period
 #' @export
 fin_pay <- function(pv, rate, n) {
-  len <- max(length(pv), length(rate), length(n))
-  pay <- vector("numeric", len)
+  len <- length(pv)
+  if (len != length(rate) || len != length(n)) {
+    stop("`pv`, `rate`, and `n` must have the same length", call. = FALSE)
+  }
   temp <- (1 + rate) ^ n
-  pay[rate == 0] <- -pv / n
-  pay[rate != 0] <- -pv * (rate * temp) / (temp - 1)
+  z <- (rate == 0)
+  r <- !z
+  pay <- vector("numeric", len)
+  pay[z] <- -pv[z] / n[z]
+  pay[r] <- -pv[r] * (rate[r] * temp[r]) / (temp[r] - 1)
   pay
 }
 
@@ -76,9 +84,14 @@ g_div_gp <- function(r, n, p, x) {
 #' @return Number of compounding periods
 #' @export
 fin_n <- function(pv, pay, rate) {
-  len <- max(length(pv), length(pay), length(rate))
+  len <- length(pv)
+  if (len != length(pay) || len != length(rate)) {
+    stop("`pv`, `pay`, and `rate` must have the same length", call. = FALSE)
+  }
+  z <- (rate == 0)
+  r <- !z
   n <- vector("numeric", len)
-  n[rate == 0] <- -pv / pay
-  n[rate != 0] <- log(1 - rate * pv / pay) / log(1 + rate)
+  n[z] <- -pv[z] / pay[z]
+  n[r] <- -log(1 + rate[r] * pv[r] / pay[r]) / log(1 + rate[r])
   n
 }
