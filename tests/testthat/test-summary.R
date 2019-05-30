@@ -1,6 +1,4 @@
-context("test-summary2")
-
-test_that("returns a data frame with correct columns", {
+test_that("summary2 returns a data frame with correct columns", {
   dat <- data.frame(
     a = 1L,
     b = 1,

@@ -47,7 +47,7 @@ pkg_count_calls <- function(dir) {
   lines <- lapply(files, readLines)
 
   out <- vector("list", length(calls))
-  out <- setNames(out, calls)
+  out <- stats::setNames(out, calls)
 
   for (call in calls) {
     out[[call]] <- vapply(lines, FUN.VALUE = integer(1), FUN = function(.x) {

@@ -46,8 +46,8 @@ boot_ci <- function(x, times, fun = "mean", probs = c(0.1, 0.5, 0.9), w = NULL) 
     })
   }
 
-  out <- qnorm(p = probs, mean = mean(res), sd = sqrt(var(res)))
-  out <- setNames(out, paste0("p", probs * 100))
+  out <- stats::qnorm(p = probs, mean = mean(res), sd = sqrt(stats::var(res)))
+  out <- stats::setNames(out, paste0("p", probs * 100))
   out
 }
 
