@@ -1,12 +1,12 @@
-# benchmark tabulate2
+# benchmark count
 
 library(tidyverse)
 library(rwmisc)
 library(vctrs)
 library(bench)
 
-sizes <- 10^c(5, 6)
-upper <- 10^c(1, 4, 7)
+sizes <- 10^(5:7)
+upper <- 10^(1:7)
 
 # funs --------------------------------------------------------------------
 
@@ -20,15 +20,17 @@ run_bench <- function(sizes, upper) {
     size <- params$size[[i]]
     upper <- params$upper[[i]]
     x <- as.integer(round(runif(size, min = -upper, max = upper)))
+    df <- dplyr::tibble(x = x)
 
     res <- bench::mark(
       sum(x),
       tabulate(x),
-      tabulate2(x),
-      vec_count(x),
+      rwmisc::count(x),
+      vctrs::vec_count(x),
+      dplyr::count(df, x),
       table(x),
       check = FALSE,
-      iterations = 10
+      iterations = 1
     )
 
     res <- res[, c("expression", "median", "n_itr")]

@@ -3,8 +3,9 @@
 #' @param x Vector
 #' @return List of unique values of x and counts of each unique value
 #' @export
-tabulate2 <- function(x) {
-  keys <- sort(unique(x))
-  counts <- tabulate(match(x, keys))
+count <- function(x) {
+  keys <- sort(unique(x), na.last = FALSE)
+  counts <- tabulate(fastmatch::fmatch(x, keys))
+  keys <- as.vector(keys)
   list(key = keys, count = counts)
 }
