@@ -1,7 +1,6 @@
 # TODO:
 # summary2() work for all types and classes
 # summary2_by() split benchmark
-# summary2_by() multiple group vars
 # summary2_by() NA level in group
 
 #' Alternative to summary for data frames
@@ -77,7 +76,7 @@ summary2_by <- function(data, by, vars, probs = seq(0, 1, 0.25)) {
     res <- summary2(.x[vars], probs)
     rows <- seq_len(nrow(res))
     by_cols <- .x[rows, by]
-    dplyr::bind_cols(by_cols, res)
+    c(by_cols, res)
   })
 
   out <- dplyr::bind_rows(out)
