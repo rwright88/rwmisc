@@ -98,7 +98,7 @@ summary_dbl <- function(x, probs = seq(0, 1, 0.25)) {
   x <- x[!is.na(x)]
   mean1 <- mean(x)
   probs <- unique(probs)
-  quantiles <- stats::quantile(x, probs = probs, na.rm = TRUE, names = FALSE, type = alg)
+  quantiles <- stats::quantile(x, probs = probs, names = FALSE, type = alg)
   quantiles <- stats::setNames(quantiles, paste0("p", probs * 100))
 
   c(
@@ -113,9 +113,8 @@ summary_lgl <- function(x) {
   }
 
   d_na <- mean(is.na(x))
-  x <- x[!is.na(x)]
   n_unique <- length(unique(x))
-  mean1 <- mean(x)
+  mean1 <- mean(x, na.rm = TRUE)
 
   list(
     d_na = d_na,
@@ -130,7 +129,6 @@ summary_chr <- function(x) {
   }
 
   d_na <- mean(is.na(x))
-  x <- x[!is.na(x)]
   n_unique <- length(unique(x))
 
   list(
