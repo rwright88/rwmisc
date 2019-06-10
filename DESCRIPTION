@@ -10,15 +10,16 @@ Description: Miscellaneous functions.
 License: MIT + file LICENSE
 Imports: 
     dplyr,
+    fastmatch,
+    stats,
     stringr
 Suggests: 
     data.table,
     DBI,
     ggplot2,
-    leaflet,
     RSQLite,
     sf,
-    testthat
+    testthat (>= 2.1.0)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

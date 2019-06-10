@@ -1,6 +1,4 @@
-context("test-identical-all")
-
-test_that("same as repeating identical()", {
+test_that("identical_all has same return as repeating identical()", {
   x <- list(1, 1, 1)
   expect_identical(
     identical_all(x),

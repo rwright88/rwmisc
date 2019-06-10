@@ -1,5 +1,4 @@
-# TODO:
-# add options for reading delimited file (skip, etc), database index?
+# TODO: add options for reading delimited file (skip, etc), database index?
 
 #' Write data files to database table
 #'

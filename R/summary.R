@@ -1,7 +1,6 @@
-# TODO
+# TODO:
 # summary2() work for all types and classes
 # summary2_by() split benchmark
-# summary2_by() multiple group vars
 # summary2_by() NA level in group
 
 #' Alternative to summary for data frames
@@ -77,7 +76,7 @@ summary2_by <- function(data, by, vars, probs = seq(0, 1, 0.25)) {
     res <- summary2(.x[vars], probs)
     rows <- seq_len(nrow(res))
     by_cols <- .x[rows, by]
-    dplyr::bind_cols(by_cols, res)
+    c(by_cols, res)
   })
 
   out <- dplyr::bind_rows(out)
@@ -99,8 +98,8 @@ summary_dbl <- function(x, probs = seq(0, 1, 0.25)) {
   x <- x[!is.na(x)]
   mean1 <- mean(x)
   probs <- unique(probs)
-  quantiles <- quantile(x, probs = probs, na.rm = TRUE, names = FALSE, type = alg)
-  quantiles <- setNames(quantiles, paste0("p", probs * 100))
+  quantiles <- stats::quantile(x, probs = probs, names = FALSE, type = alg)
+  quantiles <- stats::setNames(quantiles, paste0("p", probs * 100))
 
   c(
     list(d_na = d_na, mean = mean1),
@@ -114,9 +113,8 @@ summary_lgl <- function(x) {
   }
 
   d_na <- mean(is.na(x))
-  x <- x[!is.na(x)]
   n_unique <- length(unique(x))
-  mean1 <- mean(x)
+  mean1 <- mean(x, na.rm = TRUE)
 
   list(
     d_na = d_na,
@@ -131,7 +129,6 @@ summary_chr <- function(x) {
   }
 
   d_na <- mean(is.na(x))
-  x <- x[!is.na(x)]
   n_unique <- length(unique(x))
 
   list(

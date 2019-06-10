@@ -1,5 +1,4 @@
-# TODO
-# theme_rw() is unfinished
+# TODO: theme_rw() is unfinished
 
 #' A ggplot2 theme
 #'
