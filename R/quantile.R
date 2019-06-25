@@ -31,6 +31,10 @@ wtd_quantile <- function(x, w = NULL, probs = seq(0, 1, 0.25), na.rm = FALSE) {
     w <- w[!zeros]
   }
 
+  if (length(x) == 0) {
+    return(rep(NA_real_, length(probs)))
+  }
+
   o <- order(x)
   x <- x[o]
   w <- w[o]
