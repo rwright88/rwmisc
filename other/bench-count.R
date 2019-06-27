@@ -5,12 +5,13 @@ library(rwmisc)
 library(vctrs)
 library(bench)
 
-sizes <- 10^(5:7)
-upper <- 10^(1:7)
+sizes <- 10^(4:6)
+upper <- 10^(1:6)
+iterations <- 25
 
 # funs --------------------------------------------------------------------
 
-run_bench <- function(sizes, upper) {
+run_bench <- function(sizes, upper, iterations) {
   params <- tidyr::crossing(
     size = sizes,
     upper = upper
@@ -30,18 +31,18 @@ run_bench <- function(sizes, upper) {
       dplyr::count(df, x),
       table(x),
       check = FALSE,
-      iterations = 1
+      iterations = iterations
     )
 
     res <- res[, c("expression", "median", "n_itr")]
+    res$expression <- as.character(res$expression)
     res$median <- as.numeric(res$median)
     res$size <- size
     res$upper <- upper
     res
   })
 
-  out <- bind_rows(out)
-  out
+  bind_rows(out)
 }
 
 plot_bench <- function(data, x, facet) {
@@ -62,6 +63,6 @@ plot_bench <- function(data, x, facet) {
 
 # run ---------------------------------------------------------------------
 
-res <- run_bench(sizes = sizes, upper = upper)
+res <- run_bench(sizes = sizes, upper = upper, iterations = iterations)
 
 plot_bench(res, x = "upper", facet = "size")
