@@ -1,35 +1,35 @@
-# benchmark count
+# benchmark weighted quantile
 
 library(tidyverse)
 library(rwmisc)
-library(vctrs)
+library(Hmisc)
 library(bench)
 
 sizes <- 10^(4:6)
-upper <- 10^(1:6)
-iterations <- 25
+digits <- 1:6
+iterations <- 5
 
 # funs --------------------------------------------------------------------
 
-run_bench <- function(sizes, upper, iterations) {
+run_bench <- function(sizes, digits, iterations) {
   params <- tidyr::crossing(
     size = sizes,
-    upper = upper
+    digits = digits
   )
 
   out <- lapply(seq_len(nrow(params)), function(i) {
     size <- params$size[[i]]
-    upper <- params$upper[[i]]
-    x <- as.integer(round(runif(size, min = -upper, max = upper)))
-    df <- dplyr::tibble(x = x)
+    digits <- params$digits[[i]]
+    x <- round(rnorm(size), digits)
+    w <- runif(size)
+    uniques <- length(unique(x))
 
     res <- bench::mark(
-      sum(x),
-      tabulate(x),
-      rwmisc::count(x),
-      vctrs::vec_count(x),
-      dplyr::count(df, x),
-      table(x),
+      Hmisc::wtd.quantile(x, w),
+      rwmisc::wtd_quantile(x, w),
+      median(x),
+      weighted.mean(x, w),
+      mean(x),
       check = FALSE,
       iterations = iterations
     )
@@ -38,7 +38,7 @@ run_bench <- function(sizes, upper, iterations) {
     res$expression <- as.character(res$expression)
     res$median <- as.numeric(res$median)
     res$size <- size
-    res$upper <- upper
+    res$uniques <- uniques
     res
   })
 
@@ -63,6 +63,6 @@ plot_bench <- function(data, x, facet) {
 
 # run ---------------------------------------------------------------------
 
-res <- run_bench(sizes = sizes, upper = upper, iterations = iterations)
+res <- run_bench(sizes = sizes, digits = digits, iterations = iterations)
 
-plot_bench(res, x = "upper", facet = "size")
+plot_bench(res, x = "uniques", facet = "size")

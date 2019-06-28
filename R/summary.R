@@ -46,8 +46,7 @@ summary2 <- function(data, probs = seq(0, 1, 0.25)) {
   out$name <- names(data)
   out$type <- shorten_type(types)
   out$n <- nrow(data)
-  out <- out[, ord]
-  out
+  out[, ord]
 }
 
 #' Alternative to summary for data frames, by groups
@@ -80,8 +79,7 @@ summary2_by <- function(data, by, vars, probs = seq(0, 1, 0.25)) {
   })
 
   out <- dplyr::bind_rows(out)
-  out <- out[do.call(order, out[by]), ]
-  out
+  out[do.call(order, out[by]), ]
 }
 
 summary_dbl <- function(x, probs = seq(0, 1, 0.25)) {

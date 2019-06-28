@@ -2,7 +2,7 @@ Package: rwmisc
 Title: Ray Wright Miscellaneous
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "Raw",
+    person(given = "Ray",
            family = "Wright",
            role = c("aut", "cre"),
            email = "raywright88@gmail.com")

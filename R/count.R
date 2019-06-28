@@ -1,3 +1,6 @@
+# TODO
+# Somtimes fastmatch::fmatch doesn't equal base::match when matching value of 0?
+
 #' Alternative to tabulate
 #'
 #' @param x Vector
