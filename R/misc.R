@@ -14,11 +14,6 @@ identical_all <- function(x, ...) {
   }))
 }
 
-# from rlang::is_installed()
-is_installed <- function(pkg) {
-  identical(requireNamespace(pkg, quietly = TRUE), TRUE)
-}
-
 #' Count function calls of package imports from package source
 #'
 #' @param dir Directory of package source
@@ -37,9 +32,8 @@ pkg_count_calls <- function(dir) {
   } else {
     imports <- desc[, "Imports"]
     imports <- strsplit(imports, split = ",")[[1]]
-    imports <- stringr::str_remove_all(imports, "\\n")
-    imports <- stringr::str_remove_all(imports, "\\(.*\\)")
-    imports <- stringr::str_trim(imports)
+    imports <- gsub("\\n", "", imports, perl = TRUE)
+    imports <- gsub("\\(.*\\)", "", imports, perl = TRUE)
     calls <- paste0(imports, "::")
   }
 
@@ -50,8 +44,8 @@ pkg_count_calls <- function(dir) {
   out <- stats::setNames(out, calls)
 
   for (call in calls) {
-    out[[call]] <- vapply(lines, FUN.VALUE = integer(1), FUN = function(.x) {
-      sum(stringr::str_count(.x, pattern = call))
+    out[[call]] <- vapply(lines, FUN.VALUE = numeric(1), FUN = function(.x) {
+      sum(strw_count(.x, pattern = call, fixed = TRUE))
     })
   }
 

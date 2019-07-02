@@ -11,8 +11,7 @@ License: MIT + file LICENSE
 Imports: 
     dplyr,
     fastmatch,
-    stats,
-    stringr
+    stats
 Suggests: 
     data.table,
     DBI,
