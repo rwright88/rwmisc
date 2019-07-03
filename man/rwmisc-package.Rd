@@ -9,7 +9,7 @@
 Miscellaneous functions.
 }
 \author{
-\strong{Maintainer}: Raw Wright \email{raywright88@gmail.com}
+\strong{Maintainer}: Ray Wright \email{raywright88@gmail.com}
 
 }
 \keyword{internal}
