@@ -31,7 +31,7 @@ map_us_metro <- function(data, fill, size = NULL) {
   data <- dplyr::left_join(us_metro_cent, data, by = "cbsa_code")
 
   # ~~~ temp ~~~
-  data <- data[!stringr::str_detect(data$cbsa_name, ", PR|, HI|, AK"), ]
+  data <- data[!grepl(", PR|, HI|, AK", data$cbsa_name, perl = TRUE), ]
   us_state_poly <- us_state_poly[!(us_state_poly$state_fips %in% c("02", "15", "72")), ]
 
   if (!is.null(size)) {
@@ -85,7 +85,7 @@ map_us_county <- function(data, fill, type = c("polygons", "centroids"), size = 
   if (!is.null(state)) {
     stopifnot(is.character(state))
     us_state_poly <- us_state_poly[which(us_state_poly$state_fips %in% state), ]
-    state_fips <- stringr::str_sub(counties$county_fips, 1, 2)
+    state_fips <- substr(counties$county_fips, 1, 2)
     counties <- counties[which(state_fips %in% state), ]
   }
 
@@ -97,17 +97,16 @@ map_us_county <- function(data, fill, type = c("polygons", "centroids"), size = 
   }
 
   p <- ggplot2::ggplot(counties)
-
   if (type == "polygons") {
     p <- p + ggplot2::geom_sf(ggplot2::aes(fill = !!fill_), color = NA)
   } else if (type == "centroids") {
     p <- p + ggplot2::geom_sf(ggplot2::aes(fill = !!fill_, size = !!size_),
       shape = 21,
       stroke = 0.1,
+      color = "#000000",
       show.legend = "point"
     )
   }
-
   p <- p + ggplot2::geom_sf(data = us_state_poly, fill = NA, size = 0.3)
   p
 }

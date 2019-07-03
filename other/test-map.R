@@ -1,11 +1,12 @@
 # US county/metro pop change
 
-library(tidyverse)
+library(dplyr)
+library(ggplot2)
 library(popest)
 library(rwmisc)
 
 year_first <- 2010
-year_last  <- 2017
+year_last  <- 2018
 
 # funs --------------------------------------------------------------------
 
@@ -15,7 +16,6 @@ get_county <- function(last, file = NULL) {
   } else {
     data <- read_csv(file)
   }
-
   data <- popest::clean_county(data, last)
   data <- group_by(data, year, county)
   data <- summarise(data, pop = sum(pop))
@@ -45,13 +45,13 @@ calc_changes <- function(data, bys, first, last) {
 
 # run ---------------------------------------------------------------------
 
-county <- get_county(last = year_last, file = "~/data/popest/cc-est2017-alldata.csv")
+county <- get_county(last = year_last, file = NULL)
 metro <- get_metro(county)
 
 county <- calc_changes(county, bys = "county", first = year_first, last = year_last)
 metro <- calc_changes(metro, bys = c("cbsa_code", "cbsa_name"), first = year_first, last = year_last)
 
-states <- unique(str_sub(county$county, 1, 2))
+states <- unique(substr(county$county, 1, 2))
 states <- states[!(states %in% c("02", "15", "72"))]
 
 county %>%
@@ -65,7 +65,7 @@ county %>%
   rwmisc::map_us_county(fill = "change_aa", type = "centroids", size = "pop", state = states) +
   scale_fill_gradientn(colours = RColorBrewer::brewer.pal(9, "RdBu")) +
   scale_size_continuous(range = c(0.5, 15), guide = FALSE) +
-  rwmisc::theme_rw()
+  theme_bw()
 
 ggsave("~/map-county.png", dpi = 300, width = 14, height = 8)
 
@@ -79,6 +79,6 @@ metro %>%
   rwmisc::map_us_metro(fill = "change_aa", size = "pop") +
   scale_fill_gradientn(colours = RColorBrewer::brewer.pal(9, "RdBu")) +
   scale_size_continuous(range = c(0.5, 20), guide = FALSE) +
-  rwmisc::theme_rw()
+  theme_bw()
 
 ggsave("~/map-metro.png", dpi = 300, width = 14, height = 8)
