@@ -1,3 +1,6 @@
+# TODO
+# add tests for pkg_count_call()
+
 #' Test objects in list for exact equality
 #'
 #' @param x List of objects
