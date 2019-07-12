@@ -15,7 +15,7 @@ equal <- function(x, tol = sqrt(.Machine$double.eps)) {
     logical   = (abs(max(x) - min(x)) < tol),
     integer   = (abs(max(x) - min(x)) < tol),
     double    = (abs(max(x) - min(x)) < tol),
-    character = (length(unique(x)) == 1),
+    character = all(x == x[1]),
     list      = equal_list(x),
     stop("Unsupported type.", call. = FALSE)
   )
