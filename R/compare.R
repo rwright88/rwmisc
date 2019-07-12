@@ -22,6 +22,10 @@ equal <- function(x, tol = sqrt(.Machine$double.eps)) {
 }
 
 equal_list <- function(x) {
+  types <- vapply(x, FUN.VALUE = character(1), FUN = typeof)
+  if (!equal(types)) {
+    return(FALSE)
+  }
   res <- vector("logical", length(x))
   for (i in seq_along(res)) {
     res[i] <- identical(x[[1]], x[[i]])
