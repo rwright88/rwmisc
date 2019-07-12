@@ -1,3 +1,6 @@
+# TODO
+# add tests for strw_count()
+
 # from rlang::is_installed()
 is_installed <- function(pkg) {
   identical(requireNamespace(pkg, quietly = TRUE), TRUE)

@@ -1,4 +1,6 @@
-# TODO: add options for reading delimited file (skip, etc), database index?
+# TODO
+# add options for reading delimited file (skip, etc), database index?
+# add tests
 
 #' Write data files to database table
 #'
@@ -32,7 +34,7 @@ db_write_files <- function(files, file_db, table_name, batch_size = 1) {
     headers <- lapply(files, function(.x) {
       sort(names(data.table::fread(.x, nrows = 0, header = TRUE)))
     })
-    if (identical_all(headers) != TRUE) {
+    if (equal(headers) != TRUE) {
       stop("Files have inconsistent headers.", call. = FALSE)
     }
   }

@@ -2,6 +2,7 @@
 # summary2() work for all types and classes
 # summary2_by() split benchmark
 # summary2_by() NA level in group
+# add tests for summary2_by()
 
 #' Alternative to summary for data frames
 #'
