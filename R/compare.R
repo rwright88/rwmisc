@@ -10,7 +10,7 @@
 #' @param tol Tolerance
 #' @return Logical
 #' @export
-equal <- function(x, tol = sqrt(.Machine$double.eps)) {
+equal_all <- function(x, tol = sqrt(.Machine$double.eps)) {
   switch(typeof(x),
     logical   = (abs(max(x) - min(x)) < tol),
     integer   = (abs(max(x) - min(x)) < tol),
@@ -23,7 +23,7 @@ equal <- function(x, tol = sqrt(.Machine$double.eps)) {
 
 equal_list <- function(x) {
   types <- vapply(x, FUN.VALUE = character(1), FUN = typeof)
-  if (!equal(types)) {
+  if (!equal_all(types)) {
     return(FALSE)
   }
   res <- vector("logical", length(x))
