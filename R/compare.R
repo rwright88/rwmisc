@@ -10,18 +10,22 @@
 #' @param tol Tolerance
 #' @return Logical
 #' @export
-equal <- function(x, tol = sqrt(.Machine$double.eps)) {
+equal_all <- function(x, tol = sqrt(.Machine$double.eps)) {
   switch(typeof(x),
     logical   = (abs(max(x) - min(x)) < tol),
     integer   = (abs(max(x) - min(x)) < tol),
     double    = (abs(max(x) - min(x)) < tol),
-    character = (length(unique(x)) == 1),
+    character = all(x == x[1]),
     list      = equal_list(x),
     stop("Unsupported type.", call. = FALSE)
   )
 }
 
 equal_list <- function(x) {
+  types <- vapply(x, FUN.VALUE = character(1), FUN = typeof)
+  if (!equal_all(types)) {
+    return(FALSE)
+  }
   res <- vector("logical", length(x))
   for (i in seq_along(res)) {
     res[i] <- identical(x[[1]], x[[i]])

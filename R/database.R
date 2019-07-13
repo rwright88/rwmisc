@@ -34,7 +34,7 @@ db_write_files <- function(files, file_db, table_name, batch_size = 1) {
     headers <- lapply(files, function(.x) {
       sort(names(data.table::fread(.x, nrows = 0, header = TRUE)))
     })
-    if (equal(headers) != TRUE) {
+    if (equal_all(headers) != TRUE) {
       stop("Files have inconsistent headers.", call. = FALSE)
     }
   }
