@@ -4,10 +4,12 @@
 \alias{equal_all}
 \title{Test that all elements in vector are equal}
 \usage{
-equal_all(x, tol = sqrt(.Machine$double.eps))
+equal_all(x, na.rm = FALSE, tol = sqrt(.Machine$double.eps))
 }
 \arguments{
 \item{x}{Vector}
+
+\item{na.rm}{Logical, remove NAs before comparing?}
 
 \item{tol}{Tolerance}
 }

@@ -1,16 +1,18 @@
 # TODO
-# NA?
 # identical vs all.equal for lists
-# additional arguments passed with ...
-# add tests
 
 #' Test that all elements in vector are equal
 #'
 #' @param x Vector
+#' @param na.rm Logical, remove NAs before comparing?
 #' @param tol Tolerance
 #' @return Logical
 #' @export
-equal_all <- function(x, tol = sqrt(.Machine$double.eps)) {
+equal_all <- function(x, na.rm = FALSE, tol = sqrt(.Machine$double.eps)) {
+  if (na.rm == TRUE) {
+    x <- x[!is.na(x)]
+  }
+
   switch(typeof(x),
     logical   = (abs(max(x) - min(x)) < tol),
     integer   = (abs(max(x) - min(x)) < tol),
@@ -22,10 +24,6 @@ equal_all <- function(x, tol = sqrt(.Machine$double.eps)) {
 }
 
 equal_list <- function(x) {
-  types <- vapply(x, FUN.VALUE = character(1), FUN = typeof)
-  if (!equal_all(types)) {
-    return(FALSE)
-  }
   res <- vector("logical", length(x))
   for (i in seq_along(res)) {
     res[i] <- identical(x[[1]], x[[i]])
