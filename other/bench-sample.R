@@ -60,7 +60,7 @@ plot_bench <- function(data) {
     scale_y_log10(breaks = 10 ^ (-10:10), minor_breaks = NULL) +
     scale_color_brewer(type = "qual", palette = "Set1") +
     annotation_logticks() +
-    rwmisc::theme_rw()
+    theme_bw()
 }
 
 # run ---------------------------------------------------------------------
