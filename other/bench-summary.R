@@ -1,12 +1,15 @@
 # benchmark summary2()
 
-library(tidyverse)
-library(skimr)
+library(bench)
+library(dplyr)
+library(ggplot2)
 library(rwmisc)
-library(microbenchmark)
+library(tidyr)
+library(vroom)
 
 n_rows <- 10^(3:6)
-n_cols <- 10^(1:2)
+n_cols <- c(4, 40)
+iterations <- 25
 
 # funs --------------------------------------------------------------------
 
@@ -14,71 +17,49 @@ f_base <- function(data) {
   summary(data)
 }
 
-f_skimr <- function(data) {
-  skimr::skim(data)
-}
-
 f_rwmisc <- function(data) {
   rwmisc::summary2(data)
 }
 
-create_data <- function(n_rows, reps) {
-  dat <- map_dfc(seq_len(reps), function(.x) {
-    tibble(
-      lgl = sample(c(TRUE, FALSE, NA), n_rows, replace = TRUE),
-      int = sample(c(1:10, NA), n_rows, replace = TRUE),
-      dbl = rnorm(n_rows, mean = 5, sd = 1),
-      chr = sample(c(letters[1:10], NA), n_rows, replace = TRUE)
-    )
-  })
-
-  dat
-}
-
-bench_funs <- function(f_base, f_skimr, f_rwmisc, n_rows, n_cols) {
-  reps <- round(n_cols / 4)
-  data <- create_data(n_rows = n_rows, reps = reps)
-
-  res <- microbenchmark(
-    f_base(data),
-    # f_skimr(data),
-    f_rwmisc(data),
-    times = 10
+run_bench <- function(n_rows, n_cols, iterations) {
+  params <- crossing(
+    n_rows = n_rows,
+    n_cols = n_cols
   )
 
-  res <- mutate(res, n_rows, n_cols, time = time / 1e9)
-  res
-}
+  out <- lapply(seq_len(nrow(params)), function(i) {
+    n_rows <- params$n_rows[[i]]
+    n_cols <- params$n_cols[[i]]
+    types <- strrep("lidc", round(n_cols / 4))
+    data <- vroom::gen_tbl(n_rows, n_cols, col_types = types, missing = 0.1)
 
-run_benches <- function(f_base, f_skimr, f_rwmisc, n_rows, n_cols) {
-  params <- crossing(n_rows, n_cols)
-
-  res <- pmap(params, function(n_rows, n_cols) {
-    bench_funs(
-      f_base = f_base,
-      f_skimr = f_skimr,
-      f_rwmisc = f_rwmisc,
-      n_rows = n_rows,
-      n_cols = n_cols
+    res <- bench::mark(
+      f_base(data),
+      f_rwmisc(data),
+      check = FALSE,
+      iterations = iterations
     )
+
+    res <- res[, c("expression", "median", "n_itr")]
+    res$expression <- as.character(res$expression)
+    res$median <- as.numeric(res$median)
+    res$n_rows <- n_rows
+    res$n_cols <- n_cols
+    res
   })
 
-  res <- dplyr::bind_rows(res)
-  res
+  bind_rows(out)
 }
 
-plot_medians <- function(data, x, facet) {
-  x <- sym(x)
-  facet <- sym(facet)
+plot_bench <- function(data, x, facet) {
+  x_ <- sym(x)
 
   data %>%
-    group_by(!!x, !!facet, expr) %>%
-    summarise(time_p50 = median(time)) %>%
-    ungroup() %>%
-    ggplot(aes(!!x, time_p50, color = expr)) +
+    mutate(expression = reorder(expression, desc(median))) %>%
+    ggplot(aes(!!x_, median, color = expression)) +
     geom_point(size = 2) +
     geom_line(size = 1) +
-    facet_wrap(facet) +
+    facet_wrap(facet, nrow = 1) +
     scale_x_log10(breaks = 10 ^ (-10:10), minor_breaks = NULL) +
     scale_y_log10(breaks = 10 ^ (-10:10), minor_breaks = NULL) +
     scale_color_brewer(type = "qual", palette = "Set1") +
@@ -88,15 +69,6 @@ plot_medians <- function(data, x, facet) {
 
 # run ---------------------------------------------------------------------
 
-dat <- create_data(n_rows = 1e6, reps = 1)
-summary2(dat)
+res <- run_bench(n_rows = n_rows, n_cols = n_cols, iterations = iterations)
 
-res <- run_benches(
-  f_base = f_base,
-  f_skimr = f_skimr,
-  f_rwmisc = f_rwmisc,
-  n_rows = n_rows,
-  n_cols = n_cols
-)
-
-plot_medians(res, x = "n_rows", facet = "n_cols")
+plot_bench(res, x = "n_rows", facet = "n_cols")
