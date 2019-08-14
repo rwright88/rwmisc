@@ -1,3 +1,6 @@
+# TODO:
+# should work when length(x) <= 1
+
 #' Calculate empirical bootstrap confidence intervals
 #'
 #' @param x Numeric vector

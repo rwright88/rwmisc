@@ -14,19 +14,16 @@ summary2 <- function(data, probs = seq(0, 1, 0.25), uniques = FALSE) {
   if (ncol(data) < 1) {
     return("`data` has 0 columns")
   }
-
   types <- vapply(data, FUN.VALUE = character(1), FUN = typeof)
 
   out <- lapply(data, function(vals) {
     if (all(is.na(vals))) {
       return(list(d_na = 1))
     }
-
     type <- typeof(vals)
     if (inherits(vals, "factor")) {
       type <- "character"
     }
-
     if (type %in% c("double", "integer")) {
       out <- summary_dbl(vals, probs)
     } else if (type == "logical") {
@@ -36,7 +33,6 @@ summary2 <- function(data, probs = seq(0, 1, 0.25), uniques = FALSE) {
     } else {
       out <- list(d_na = NA)
     }
-
     out
   })
 
