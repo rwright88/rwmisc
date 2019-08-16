@@ -1,6 +1,3 @@
-# TODO:
-# should work when length(x) <= 1
-
 #' Calculate empirical bootstrap confidence intervals
 #'
 #' @param x Numeric vector
@@ -11,11 +8,17 @@
 #' @return Numeric vector of confidence intervals
 #' @export
 boot_ci <- function(x, times, fun = "mean", probs = c(0.1, 0.5, 0.9), w = NULL) {
-  stopifnot(is.numeric(x), length(x) > 1, anyNA(x) == FALSE)
+  stopifnot(is.numeric(x), anyNA(x) == FALSE)
   stopifnot(is.numeric(times), length(times) == 1)
   stopifnot(is.numeric(probs), all(probs >= 0 & probs <= 1))
 
   x_len <- length(x)
+  if (x_len < 1) {
+    out <- rep(NA_real_, length(probs))
+    out <- stats::setNames(out, paste0("p", probs * 100))
+    return(out)
+  }
+
   size <- x_len * times
   size_max <- 1e7
   fun_mat <- get_matrix_fun(fun, size, size_max)
