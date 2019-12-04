@@ -12,8 +12,6 @@ knitr::opts_chunk$set(
   out.width = "100%",
   message = FALSE
 )
-
-options(width = 120)
 ```
 
 # rwmisc
@@ -26,7 +24,7 @@ Miscellaneous functions.
 devtools::install_github("rwright88/rwmisc")
 ```
 
-## Examples
+## Example
 
 An alternative to `base::summary()` for data frames:
 
