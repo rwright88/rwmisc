@@ -1,4 +1,5 @@
 # TODO
+# fix dealing with different sized inputs
 # add tests
 
 #' Calculate present value

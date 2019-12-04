@@ -2,7 +2,7 @@
 % Please edit documentation in R/compare.R
 \name{equal_all}
 \alias{equal_all}
-\title{Test that all elements in vector are equal}
+\title{Test that all elements in a vector are equal}
 \usage{
 equal_all(x, na.rm = FALSE, tol = sqrt(.Machine$double.eps))
 }
@@ -17,5 +17,5 @@ equal_all(x, na.rm = FALSE, tol = sqrt(.Machine$double.eps))
 Logical
 }
 \description{
-Test that all elements in vector are equal
+Test that all elements in a vector are equal
 }

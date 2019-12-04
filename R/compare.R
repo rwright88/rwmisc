@@ -1,7 +1,4 @@
-# TODO
-# identical vs all.equal for lists
-
-#' Test that all elements in vector are equal
+#' Test that all elements in a vector are equal
 #'
 #' @param x Vector
 #' @param na.rm Logical, remove NAs before comparing?

@@ -1,6 +1,3 @@
-# TODO
-# stats::approx method constant or linear?
-
 #' Weighted quantiles
 #'
 #' @param x Numeric vector
