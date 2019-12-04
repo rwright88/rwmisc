@@ -9,11 +9,10 @@ Authors@R:
 Description: Miscellaneous functions.
 License: MIT + file LICENSE
 Imports: 
-    dplyr,
+    data.table,
     fastmatch,
     stats
 Suggests: 
-    data.table,
     DBI,
     RSQLite,
     testthat (>= 2.1.0)

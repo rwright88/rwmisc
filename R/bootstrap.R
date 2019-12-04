@@ -15,7 +15,7 @@ boot_ci <- function(x, times, fun = "mean", probs = c(0.1, 0.5, 0.9), w = NULL) 
   x_len <- length(x)
   if (x_len < 1) {
     out <- rep(NA_real_, length(probs))
-    out <- stats::setNames(out, paste0("p", probs * 100))
+    out <- set_names(out, paste0("p", probs * 100))
     return(out)
   }
 
@@ -53,7 +53,7 @@ boot_ci <- function(x, times, fun = "mean", probs = c(0.1, 0.5, 0.9), w = NULL) 
   }
 
   out <- stats::qnorm(p = probs, mean = mean(res), sd = sqrt(stats::var(res)))
-  out <- stats::setNames(out, paste0("p", probs * 100))
+  out <- set_names(out, paste0("p", probs * 100))
   out
 }
 

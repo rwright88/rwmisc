@@ -13,8 +13,8 @@
 #' @param batch_size Number of data files to write to database table per batch
 #' @export
 db_write_files <- function(files, file_db, table_name, batch_size = 1) {
-  if (!(is_installed("data.table") && is_installed("DBI") && is_installed("RSQLite"))) {
-    stop("`db_write_files` requires data.table, DBI, and RSQLite.", call. = FALSE)
+  if (!(is_installed("DBI") && is_installed("RSQLite"))) {
+    stop("`db_write_files` requires DBI and RSQLite.", call. = FALSE)
   }
 
   n_files <- length(files)

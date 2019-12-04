@@ -1,6 +1,3 @@
-# TODO:
-# summary2() work for all common types and classes
-
 #' Alternative to summary for data frames
 #'
 #' @param data Data frame
@@ -36,12 +33,13 @@ summary2 <- function(data, probs = seq(0, 1, 0.25), uniques = FALSE) {
     out
   })
 
-  out <- dplyr::bind_rows(out)
+  out <- data.table::rbindlist(out, fill = TRUE)
   ord <- c("name", "type", "n", names(out))
   out$name <- names(data)
   out$type <- shorten_type(types)
   out$n <- nrow(data)
-  out[, ord]
+  data.table::setcolorder(out, ord)
+  out
 }
 
 summary_dbl <- function(x, probs = seq(0, 1, 0.25)) {
@@ -59,7 +57,7 @@ summary_dbl <- function(x, probs = seq(0, 1, 0.25)) {
   mean1 <- mean(x)
   probs <- unique(probs)
   quantiles <- stats::quantile(x, probs = probs, names = FALSE, type = alg)
-  quantiles <- stats::setNames(quantiles, paste0("p", probs * 100))
+  quantiles <- set_names(quantiles, paste0("p", probs * 100))
   c(
     list(d_na = d_na, mean = mean1),
     as.list(quantiles)
