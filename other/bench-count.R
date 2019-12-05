@@ -7,8 +7,8 @@ library(rwmisc)
 library(tidyr)
 library(vctrs)
 
-sizes <- 10^(4:6)
-upper <- 10^(1:6)
+sizes <- 10^(5:6)
+d_uniques <- 10^(-4:-1)
 iterations <- 25
 
 # funs --------------------------------------------------------------------
@@ -25,24 +25,25 @@ count_match <- function(x) {
   list(key = keys, count = counts)
 }
 
-run_bench <- function(sizes, upper, iterations) {
+run_bench <- function(sizes, d_uniques, iterations) {
   params <- crossing(
     size = sizes,
-    upper = upper
+    d_uniques = d_uniques
   )
 
   out <- lapply(seq_len(nrow(params)), function(i) {
     size <- params$size[[i]]
-    upper <- params$upper[[i]]
-    x <- as.integer(round(runif(size, min = -upper, max = upper)))
+    d_uniques <- params$d_uniques[[i]]
+    n_uniques <- round(size * d_uniques)
+    x <- sample(seq_len(n_uniques), size, replace = TRUE)
     df <- tibble(x = x)
 
     res <- bench::mark(
-      rwmisc::count(x),
-      count_match(x),
-      vctrs::vec_count(x),
-      dplyr::count(df, x),
-      table(x),
+      "table"  = table(x),
+      "fmatch" = rwmisc::count(x),
+      "match"  = count_match(x),
+      "vctrs"  = vctrs::vec_count(x),
+      "dplyr"  = dplyr::count(df, x),
       check = FALSE,
       iterations = iterations
     )
@@ -51,7 +52,7 @@ run_bench <- function(sizes, upper, iterations) {
     res$expression <- as.character(res$expression)
     res$median <- as.numeric(res$median)
     res$size <- size
-    res$upper <- upper
+    res$d_uniques <- d_uniques
     res
   })
 
@@ -76,6 +77,6 @@ plot_bench <- function(data, x, facet) {
 
 # run ---------------------------------------------------------------------
 
-res <- run_bench(sizes = sizes, upper = upper, iterations = iterations)
+res <- run_bench(sizes = sizes, d_uniques = d_uniques, iterations = iterations)
 
-plot_bench(res, x = "upper", facet = "size")
+plot_bench(res, x = "d_uniques", facet = "size")

@@ -1,9 +1,10 @@
 #' Alternative to tabulate
 #'
 #' @param x Vector
+#' @param sort Logical, sort in descending order of count?
 #' @return List of unique values of x and counts of each unique value
 #' @export
-count <- function(x) {
+count <- function(x, sort = FALSE) {
   if (is.factor(x)) {
     keys <- levels(x)
     counts <- tabulate(x)
@@ -12,5 +13,11 @@ count <- function(x) {
     counts <- tabulate(fastmatch::fmatch(x, keys))
     keys <- as.vector(keys)
   }
-  list(key = keys, count = counts)
+
+  out <- list(key = keys, count = counts)
+  if (sort == TRUE) {
+    ord <- order(-out$count)
+    out <- lapply(out, function(.x) .x[ord])
+  }
+  out
 }
