@@ -46,7 +46,7 @@ boot_ci <- function(x, times, fun = "mean", probs = c(0.1, 0.5, 0.9), w = NULL) 
     }
   } else {
     reps <- seq_len(times)
-    res <- vapply(reps, FUN.VALUE = double(1), function(rep) {
+    res <- vapply(reps, FUN.VALUE = 0, function(rep) {
       xs <- sample(x, size = x_len, replace = TRUE, prob = w)
       fun(xs)
     })

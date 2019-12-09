@@ -1,51 +1,50 @@
 # benchmark boot_ci()
 
-library(tidyverse)
 library(bench)
+library(dplyr)
+library(ggplot2)
 library(rwmisc)
+library(tidyr)
 
-size <- round(round(10^seq(1, 3, 0.2)))
-times <- 1e4
+sizes <- 10^(1:3)
+times <- 10^(3:4)
+iterations <- 25
 
 # funs --------------------------------------------------------------------
 
-bench_funs <- function(boot_ci, size, times) {
-  x <- runif(size)
-
-  res <- bench::mark(
-    boot_ci(x, times),
-    iterations = 30,
-    check = FALSE
+run_bench <- function(sizes, times, iterations) {
+  params <- tidyr::crossing(
+    size = sizes,
+    times = times
   )
 
-  out <- res[, c("expression", "median", "n_itr")]
-  out$median <- as.numeric(res$median)
-  out$size <- size
-  out$times <- times
-  out
-}
+  out <- lapply(seq_len(nrow(params)), function(i) {
+    size <- params$size[[i]]
+    times <- params$times[[i]]
+    x <- runif(size)
 
-run_benches <- function(boot_ci, size, times) {
-  params <- tidyr::crossing(size, times)
-
-  res <- purrr::pmap(params, function(size, times) {
-    bench_funs(
-      boot_ci = boot_ci,
-      size = size,
-      times = times
+    res <- bench::mark(
+      "rwmisc" = rwmisc::boot_ci(x, times),
+      iterations = iterations
     )
+
+    res <- res[, c("expression", "median", "n_itr")]
+    res$expression <- as.character(res$expression)
+    res$median <- as.numeric(res$median)
+    res$size <- size
+    res$times <- times
+    res
   })
 
-  res <- dplyr::bind_rows(res)
-  res
+  dplyr::bind_rows(out)
 }
 
-plot_medians <- function(data, x, facet) {
-  x <- sym(x)
-  facet <- sym(facet)
+plot_bench <- function(data, x, facet) {
+  x_ <- sym(x)
 
   data %>%
-    ggplot(aes(!!x, median, color = expression)) +
+    mutate(expression = reorder(expression, desc(median))) %>%
+    ggplot(aes(!!x_, median, color = expression)) +
     geom_point(size = 2) +
     geom_line(size = 1) +
     facet_wrap(facet, nrow = 1) +
@@ -58,10 +57,6 @@ plot_medians <- function(data, x, facet) {
 
 # run ---------------------------------------------------------------------
 
-res <- run_benches(
-  boot_ci = boot_ci,
-  size = size,
-  times = times
-)
+res <- run_bench(sizes = sizes, times = times, iterations = iterations)
 
-plot_medians(res, x = "size", facet = "times")
+plot_bench(res, x = "size", facet = "times")
