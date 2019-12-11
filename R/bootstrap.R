@@ -24,7 +24,9 @@ boot_ci <- function(x, times, fun = "mean", probs = c(0.1, 0.5, 0.9), w = NULL) 
   fun_mat <- get_matrix_fun(fun, size, size_max)
   fun <- match.fun(fun_mat$fun)
 
-  if (!is.null(w)) {
+  if (is.null(w)) {
+    sample <- dqrng::dqsample
+  } else {
     stopifnot(is.numeric(w), anyNA(w) == FALSE)
     w_len <- length(w)
     if (x_len != w_len) {
