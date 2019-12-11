@@ -1,31 +1,29 @@
-# benchmark boot_ci()
+# Benchmark bootstrap confidence intervals
 
 library(bench)
 library(dplyr)
 library(ggplot2)
+
 library(rwmisc)
-library(tidyr)
 
 sizes <- 10^(1:3)
 times <- 10^(3:4)
-iterations <- 25
+iters <- 25
 
 # funs --------------------------------------------------------------------
 
-run_bench <- function(sizes, times, iterations) {
-  params <- tidyr::crossing(
-    size = sizes,
-    times = times
-  )
+run_bench <- function(sizes, times, iters) {
+  params <- expand.grid(size = sizes, times = times)
 
   out <- lapply(seq_len(nrow(params)), function(i) {
     size <- params$size[[i]]
     times <- params$times[[i]]
     x <- runif(size)
+    w <- rep(1, size)
 
-    res <- bench::mark(
-      "rwmisc" = rwmisc::boot_ci(x, times),
-      iterations = iterations
+    res <- bench::mark(check = FALSE, iterations = iters,
+      "unweighted" = rwmisc::boot_ci(x, times),
+      "weighted"   = rwmisc::boot_ci(x, times, w = w)
     )
 
     res <- res[, c("expression", "median", "n_itr")]
@@ -39,24 +37,28 @@ run_bench <- function(sizes, times, iterations) {
   dplyr::bind_rows(out)
 }
 
-plot_bench <- function(data, x, facet) {
-  x_ <- sym(x)
+plot_bench <- function(data, x, facet = NULL) {
+  x <- ggplot2::sym(x)
+  data$expression <- reorder(data$expression, -data$median)
 
-  data %>%
-    mutate(expression = reorder(expression, desc(median))) %>%
-    ggplot(aes(!!x_, median, color = expression)) +
-    geom_point(size = 2) +
-    geom_line(size = 1) +
-    facet_wrap(facet, nrow = 1) +
-    scale_x_log10(breaks = 10 ^ (-10:10), minor_breaks = NULL) +
-    scale_y_log10(breaks = 10 ^ (-10:10), minor_breaks = NULL) +
-    scale_color_brewer(type = "qual", palette = "Set1") +
-    annotation_logticks() +
-    theme_bw()
+  out <- ggplot2::ggplot(data, ggplot2::aes(!!x, median, color = expression)) +
+    ggplot2::geom_point(size = 2) +
+    ggplot2::geom_line(size = 1) +
+    ggplot2::scale_x_log10(breaks = 10^(-10:10), minor_breaks = NULL) +
+    ggplot2::scale_y_log10(breaks = 10^(-10:10), minor_breaks = NULL) +
+    ggplot2::scale_color_brewer(type = "qual", palette = "Set1") +
+    ggplot2::annotation_logticks() +
+    ggplot2::theme_bw()
+
+  if (!is.null(facet)) {
+    out <- out + ggplot2::facet_wrap(facet, nrow = 1)
+  }
+
+  out
 }
 
 # run ---------------------------------------------------------------------
 
-res <- run_bench(sizes = sizes, times = times, iterations = iterations)
+res <- run_bench(sizes = sizes, times = times, iters = iters)
 
 plot_bench(res, x = "size", facet = "times")

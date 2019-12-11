@@ -4,10 +4,10 @@
 \alias{summary2}
 \title{Alternative to summary for data frames}
 \usage{
-summary2(data, probs = seq(0, 1, 0.25), uniques = FALSE)
+summary2(df, probs = seq(0, 1, 0.25), uniques = FALSE)
 }
 \arguments{
-\item{data}{Data frame}
+\item{df}{Data frame}
 
 \item{probs}{Numeric vector of probabilities}
 
