@@ -1,19 +1,19 @@
 #' Alternative to summary for data frames
 #'
-#' @param data Data frame
+#' @param df Data frame
 #' @param probs Numeric vector of probabilities
 #' @param uniques Logical, count uniques?
 #' @return Data frame
 #' @export
-summary2 <- function(data, probs = seq(0, 1, 0.25), uniques = FALSE) {
-  stopifnot(is.data.frame(data))
+summary2 <- function(df, probs = seq(0, 1, 0.25), uniques = FALSE) {
+  stopifnot(is.data.frame(df))
   stopifnot(is.numeric(probs), all(probs >= 0 & probs <= 1))
-  if (ncol(data) < 1) {
-    return("`data` has 0 columns")
+  if (ncol(df) < 1) {
+    return("`df` has 0 columns")
   }
-  types <- vapply(data, FUN.VALUE = character(1), FUN = typeof)
+  types <- vapply(df, FUN.VALUE = character(1), FUN = typeof)
 
-  out <- lapply(data, function(vals) {
+  out <- lapply(df, function(vals) {
     if (all(is.na(vals))) {
       return(list(d_na = 1))
     }
@@ -35,9 +35,9 @@ summary2 <- function(data, probs = seq(0, 1, 0.25), uniques = FALSE) {
 
   out <- data.table::rbindlist(out, fill = TRUE)
   ord <- c("name", "type", "n", names(out))
-  out$name <- names(data)
+  out$name <- names(df)
   out$type <- shorten_type(types)
-  out$n <- nrow(data)
+  out$n <- nrow(df)
   data.table::setcolorder(out, ord)
   out
 }

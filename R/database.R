@@ -55,18 +55,18 @@ db_write_files <- function(files, file_db, table_name, batch_size = 1) {
     last <- min(first + batch_size - 1, n_files)
     files_batch <- files[first:last]
 
-    data <- lapply(files_batch, function(.x) {
-      data <- data.table::fread(.x, header = TRUE)
-      data.table::setcolorder(data, neworder = var_order)
-      data
+    res <- lapply(files_batch, function(.x) {
+      df <- data.table::fread(.x, header = TRUE)
+      data.table::setcolorder(df, neworder = var_order)
+      df
     })
 
-    data <- data.table::rbindlist(data)
+    df <- data.table::rbindlist(res)
 
     DBI::dbWriteTable(
       conn = con,
       name = table_name,
-      value = data,
+      value = df,
       overwrite = FALSE,
       append = TRUE
     )
